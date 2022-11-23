@@ -1,0 +1,213 @@
+{% load cms_tags sekizai_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap" rel="stylesheet">
+
+    <!-- Yandex Map -->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=50d1c63f-8679-47a9-8d1a-01ba051a5cb1&lang=ru_RU" type="text/javascript">
+    </script>
+
+    <title>{% page_attribute "page_title" %}</title>
+    {% render_block "css" %}
+</head>
+    <body>
+    		{% cms_toolbar %}
+			{% render_block "js" %}
+
+        <!-- Header -->
+        <header class="header">
+    <div class="header__topbar">
+        <div class="container">
+            <div class="topbar">
+                <div class="header__info">
+                    <div class="header__text">
+                        {% block phone_icon %}
+                     	{% static_placeholder "Phone Icon" %}
+                     	{% endblock phone_icon %}
+                        <span>
+                        	{% block phone %}
+                        	{% static_placeholder "Phone" %}
+                        	{% endblock phone %}
+                        </span>
+                    </div>
+                    <div class="header__text">
+                        {% block time_icon %}
+                     	{% static_placeholder "Time Icon" %}
+                     	{% endblock time_icon %}
+                        <span>
+                        	{% block time %}
+                        	{% static_placeholder "Time" %}
+                        	{% endblock time %}
+                        </span>
+                    </div>
+                    <div class="header__text">
+                        {% block adress_icon %}
+                     	{% static_placeholder "Adress Icon" %}
+                     	{% endblock adress_icon %}
+                        <span>
+                        	{% block adress %}
+                        	{% static_placeholder "Adress" %}
+                        	{% endblock adress %}
+                        </span>
+                    </div>
+                </div>
+                <div class="header__info-btn">
+                    <a href="#" class="btn">
+                    	{% block contact_header %}
+                     {% static_placeholder "Contact Header" %}
+                     {% endblock contact_header %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav>
+        <div class="container">
+            <div class="navbar">
+                <div class="navbar__logo"> 
+                	<a href="#"> 
+                	{% block logo_header %}
+               	{% placeholder "Logo Header" %}
+               	{% endblock logo_header %} 
+                  </a>
+                </div>
+                <ul class="navabr__menu menu">
+                    <li class="menu__item active"><a href="#" class="menu__item-link">Главная</a></li>
+                    <li class="menu__item"><a href="#about-section" class="menu__item-link">О Нас</a></li>
+                    <li class="menu__item"><a href="#service-section" class="menu__item-link">Наши Услуги</a></li>
+                    <li class="menu__item"><a href="#products-section" class="menu__item-link">Наша Продукция</a></li>
+                    <li class="menu__item"><a href="contacts.html" class="menu__item-link">Контакты</a></li>
+                </ul>
+                <div class="burger">
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+        <!-- Contact Form -->
+        <section class="section__form-contact">
+    <form action="" class="form__contact">
+        <label class="form__label">
+            <span>Ваше имя <span class="necessary">*</span>
+                <svg class="form__cancel" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 4L4 20" stroke="#666665"/>
+                    <path d="M4 4L20 20" stroke="#666665"/>
+                </svg>                    
+            </span>
+            <div class="form__input">
+                <input type="text" placeholder="Иван">
+                <img src="img/user.svg" alt="img">
+            </div>
+        </label>
+        <label class="form__label">
+            <span>Ваш телефон <span class="necessary">*</span> </span>
+            <div class="form__input">
+                <input type="text" placeholder="+7 (907) 123-45-67">
+                <img src="img/phone-form.svg" alt="img">
+            </div>
+        </label>
+        <label class="form__label">
+            <span>Ваша электронная почта</span>
+            <div class="form__input">
+                <input type="text" placeholder="mail@mail.com">
+                <img src="img/message.svg" alt="img">
+            </div>
+        </label>
+        <label class="form__label">
+            <span>Ваше сообщение</span>
+            <div class="form__input">
+                <textarea cols="30" rows="10" placeholder="Введите текст..."></textarea>
+            </div>
+        </label>
+        <input type="submit" class="btn form__submit">
+    </form>
+</section>
+
+        <main>
+
+        	{% block main %}
+        	{% endblock main %}
+
+        </main>
+
+        <!-- Footer -->
+        <footer>
+    <div class="container">
+        <div class="footer">
+            <div class="footer__item">
+                <div class="footer__logo">
+                    {% block footer_logo %}
+		              {% static_placeholder "Footer Logo" %}
+		              {% endblock footer_logo %}
+                </div>
+            </div>
+            <div class="footer__item">
+                <div class="footer__item-title">
+                    {% block footer_menu_title %}
+		              {% static_placeholder "Footer Menu Title" %}
+		              {% endblock footer_menu_title %}
+                </div>
+                <ul class="footer__list">
+                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Главная</a></div>
+                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Наши товары</a></div>
+                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Услуги</a></div>
+                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> О нас</a></div>
+                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Контакты</a></div>
+                </ul>
+            </div>
+            <div class="footer__item">
+                <div class="footer__item-title">
+                    {% block footer_office_title %}
+		              {% static_placeholder "Footer Office Title" %}
+		              {% endblock footer_office_title %}
+                </div>
+                <div class="footer__text">
+                    {% block footer_office_text %}
+		              {% static_placeholder "Footer Office Text" %}
+		              {% endblock footer_office_text %}
+		           </div>
+            </div>
+            <div class="footer__item">
+                <div class="footer__item-title">
+                    {% block footer_time_title %}
+		              {% static_placeholder "Footer Time Title" %}
+		              {% endblock footer_time_title %}
+                </div>
+                <div class="footer__text">
+                    {% block footer_time_text %}
+		              {% static_placeholder "Footer Time Text" %}
+		              {% endblock footer_time_text %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="copy">
+        <div class="container">
+            <div class="copy__text">
+                {% block footer_copy %}
+		          {% static_placeholder "Footer Copyright" %}
+		          {% endblock footer_copy %}
+            </div>
+        </div>
+    </div>
+</footer>
+
+        <script src="{% static 'js/script.min.js' %}"></script>
+    </body>
+</html>

@@ -1,0 +1,121 @@
+{% extends "home.html" %}
+{% load cms_tags sekizai_tags %}
+{% load static %}
+{% block main %}
+<script>
+    ymaps.ready(init);
+    function init(){
+        // Создание карты.
+        var myMap = new ymaps.Map("map", {
+
+            center: [52.42, 31.00],
+            zoom: 10
+        });
+
+        {% for coord in coordinates %}
+        var object{{coord.id}} = new ymaps.GeoObject({
+            geometry: {
+                type: "Point", // тип геометрии - точка
+                coordinates: [{{coord.get_coord.0.0}}.{{coord.get_coord.0.1}}, {{coord.get_coord.1.0}}.{{coord.get_coord.1.1}}] // координаты точки
+            }
+        });
+        myMap.geoObjects.add(object{{coord.id}});
+        {% endfor %}
+
+    }
+</script>
+<section class="section__contacts">
+    <div class="container">
+        <div class="contacts">
+            <div class="contact contacts__item">
+                <h3 class="contact__title">
+                    {% block contact_title %}
+                    {% static_placeholder "Contact Title" %}
+                    {% endblock contact_title %}
+                </h3>
+                <div class="contact__text">
+                    {% block contact_text %}
+                    {% static_placeholder "Contact Text" %}
+                    {% endblock contact_text %}
+                </div>
+                <div class="contact__icons">
+                    {% block contact_icons %}
+                    {% static_placeholder "Contact Icons" %}
+                    {% endblock contact_icons %}
+                </div>
+            </div>
+            <div class="map contacts__item" id="map">
+                <!-- Yandex Map -->
+            </div>
+            <div class="faq contacts__item">
+                <h4 class="section__title">
+                    {% block faq_title %}
+                    {% static_placeholder "FAQ Title" %}
+                    {% endblock faq_title %}
+                </h4>
+                <div class="faq__text">
+                    {% block faq_text %}
+                    {% static_placeholder "FAQ Text" %}
+                    {% endblock faq_text %}
+                </div>
+                <div class="faq__questions">
+                    {% block faq %}
+                    {% static_placeholder "FAQ" %}
+                    {% endblock faq %}
+                </div>
+            </div>
+            <div class="application contacts__item">
+                <h4 class="section__title">
+                    {% block contact_application_title %}
+                    {% static_placeholder "Contact Application Title" %}
+                    {% endblock contact_application_title %}
+                </h4>
+                <form action="/create_application/" method="POST" class="form__application">
+                    <div class="form__row">
+                        <label class="form__label">
+                            <div class="form__input">
+                                <input name="name" required class="required" type="text" placeholder="Ваше Имя *">
+                            </div>
+                        </label>
+                        <label class="form__label">
+                            <div class="form__input">
+                                <input name="email" type="email" placeholder="E-mail">
+                            </div>
+                        </label>
+                    </div>
+                    <div class="form__row">
+                        <label class="form__label">
+                            <div class="form__input">
+                                <input name="phone" required data-tel-input class="required" type="tel" placeholder="Ваш телефон *">
+                            </div>
+                        </label>
+                    </div>
+                    <div class="form__row">
+                        <label class="form__label">
+                            <div class="form__input">
+                                <textarea name="message" placeholder="Ваше сообщение"></textarea>
+                            </div>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-arrow form__submit">
+                        {% block contact_application_btn %}
+                        {% static_placeholder "Contact Button" %}
+                        {% endblock contact_application_btn %}
+                        <img src="{% static 'img/arrow.svg' %}" alt="">
+                    </button>
+                    {% csrf_token %}
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    $('.menu__item.active').removeClass('active')
+    $('.menu__item[data-uid=1]').remove()
+    $('.menu__item[data-uid=2]').remove()
+    $('.menu__item[data-uid=3]').remove()
+    $('.menu__item[data-uid=5]').addClass('active')
+
+</script>
+{% endblock main %}

@@ -1,0 +1,11 @@
+{% load static %}
+<div class="question">
+   <div class="question__title">
+       <span>{{instance.title}}</span>
+       <img src="{% static 'img/plus.svg' %}" alt="" class="question__open">
+       <img src="{% static 'img/minus.svg' %}" alt="" class="question__close">
+   </div>
+   <div class="question__text">
+       {{instance.text}}
+   </div>
+</div>

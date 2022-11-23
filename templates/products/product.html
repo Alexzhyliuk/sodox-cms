@@ -1,0 +1,432 @@
+{% extends "home.html" %}
+{% load cms_tags sekizai_tags %}
+{% load static %}
+
+{% block page_title %}{{object.title}}{% endblock %}
+
+{% block extra_head %}
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+{% endblock %}
+
+{% cms_toolbar %}
+{% render_block "js" %}
+
+{% block main %}
+<section class="section__form-contact">
+    <form action="/product/create_order/{{object.id}}/" method="POST" class="form__contact">
+        <label class="form__label">
+            <span>
+                {% block form_name %}
+                {% static_placeholder "Form Name" %}
+                {% endblock form_name %}
+                <svg class="form__cancel" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 4L4 20" stroke="#666665"/>
+                    <path d="M4 4L20 20" stroke="#666665"/>
+                </svg>                    
+            </span>
+            <div class="form__input">
+                <input type="text" required placeholder="Иван" id="id_name" name="name">
+                <img src="{% static 'img/user.svg' %}" alt="img">
+            </div>
+        </label>
+        <label class="form__label">
+            <span>
+                {% block form_phone %}
+                {% static_placeholder "Form Phone" %}
+                {% endblock form_phone %}
+            </span>
+            <div class="form__input">
+                <input type="tel" required data-tel-input placeholder="+7 (907) 123-45-67" id="id_phone" name="phone">
+                <img src="{% static 'img/phone-form.svg' %}" alt="img">
+            </div>
+        </label>
+        <label class="form__label">
+            <span>
+                {% block form_email %}
+                {% static_placeholder "Form Email" %}
+                {% endblock form_email %}
+            </span>
+            <div class="form__input">
+                <input type="email" placeholder="mail@mail.com" id="id_email" name="email">
+                <img src="{% static 'img/message.svg' %}" alt="img">
+            </div>
+        </label>
+        <label class="form__label">
+            <span>
+                {% block form_message %}
+                {% static_placeholder "Form Message" %}
+                {% endblock form_message %}
+            </span>
+            <div class="form__input">
+                <textarea id="id_message" name="message" cols="30" rows="10" placeholder="Введите текст..."></textarea>
+            </div>
+        </label>
+        {% csrf_token %}
+        <button type="submit" class="btn form__submit">
+                {% block form_btn %}
+                {% static_placeholder "Form Button" %}
+                {% endblock form_btn %}
+        </button>
+    </form>
+</section>
+<section class="section__product">
+    <div class="container">
+        <div class="card">
+            <div class="card__item">
+                <div class="card__product">
+                    <div class="product">
+                        <div class="product__images">
+                            <div class="product__images-main">
+                                <img src="{{object.get_image_url}}" alt="">
+                                <div class="product__tags">
+                                    {% for tag in object.tags.all %}
+                                    <div class="product__tag tag-new" style="background-color: {{tag.color}};">{{ tag.title }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="product__images-others">
+                                <div class="product__swiper-navigation">
+                                    <button class="product-button-prev">
+                                        <svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M14.375 6L8.625 12L14.375 18" stroke="#666665" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                    <button class="product-button-next">
+                                        <svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.625 18L14.375 12L8.625 6" stroke="#666665" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>                                                    
+                                    </button>
+                                </div>
+                                <div class="swiper product__swiper">
+                                    <div class="swiper-wrapper">
+                                        <div class="swiper-slide">
+                                            <div class="slide">
+                                                <div class="slide__img">
+                                                    <img src="{{ object.get_image_url }}" alt="img">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% for image in object.images.all %}
+                                        <div class="swiper-slide">
+                                            <div class="slide">
+                                                <div class="slide__img">
+                                                    {% render_model_block image %}
+                                                    <img src="{{ image.get_image_url }}" alt="img">
+                                                    {% endrender_model_block %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product__info">
+                            <!-- <h1 class="product__title">{{ object.title }}</h1> -->
+                            <h1 class="product__title">{% render_model object "title" %}</h1>
+                            <div class="product__description">
+                                {{ object.short_description }}
+                            </div>
+                            <a class="btn product__btn">
+                                {% block product_btn %}
+                                {% static_placeholder "Product Button" %}
+                                {% endblock product_btn %}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="description">
+                        <h3 class="description__title section__title title__left"><span>Описание</span></h3>
+                        <div class="description__text">
+                            {{ object.description }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card__sidebar">
+                    <div class="card__categories">
+                        <h3 class="card__categories__title section__title title__left"><span>Категории</span></h3>
+                        <div class="card__categories-img">
+                            {% for manufacturer in manufacturers %}
+                            <a href="{% url 'products:products' %}?manufacturer={{manufacturer.id}}">
+                                {% if object.manufacturer == manufacturer %}
+                                <img src="{{manufacturer.image.url}}" alt="">
+                                {% else %}
+                                <img src="{{manufacturer.inactive_image.url}}" alt="">
+                                {% endif %}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="card__viewed">
+                        <h4 class="card__viewed-title">
+                            {% block recently_viewed %}
+                            {% static_placeholder "Recently Viewed" %}
+                            {% endblock recently_viewed %}
+                        </h4>
+                        <div class="card__viewed-products">
+                            <div class="viewed__swiper-navigation">
+                                <button class="viewed-button-prev">
+                                    <svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M14.375 6L8.625 12L14.375 18" stroke="#666665" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                                <button class="viewed-button-next">
+                                    <svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.625 18L14.375 12L8.625 6" stroke="#666665" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>                                                    
+                                </button>
+                            </div>
+                            <div class="swiper viewed__swiper">
+                                <div class="swiper-wrapper">
+                                    
+                                </div>
+                                <div class="swiper-btns hidden">
+                                    <button class="button-prev">
+                                        
+                                    </button>
+                                    <button class="button-next">
+                                                              
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card__contact">
+                        <a href="{% url 'products:contacts' %}">Связаться с нами</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card__item">
+                <div class="card__params">
+                    {% if not characteristic %}
+                    <div class="card__params-subtitle">{% render_model_block characteristic_model %}Характеристики:{% endrender_model_block %}</div>
+                    {% else %}
+                    <div class="card__params-subtitle">Параметры:</div>
+                    {% endif %}
+                    <h5 class="card__params-title">{{ object.title }}</h5>
+                    <div class="card__params-table">
+                        <table class="params">
+                            <tr class="params__row">
+                                <td rowspan="2" class="params__col params__model">Модель</td>
+                                <td rowspan="2" class="params__col params__code">Код заказа</td>
+                                <td rowspan="2" class="params__col params__description">Описание</td>
+                                <td rowspan="1" class="params__col params__specifications" colspan="{{object.get_vars_count}}">Характеристики</td>
+                            </tr>
+                            <tr class="params__row">
+                                {% for var in vars %}
+                                <td class="params__col params__var">{{var}}</td>
+                                {% endfor %}
+                            </tr>
+                            {% for char in characteristic %}
+                            <tr class="params__row">
+                                <td class="params__col">{% render_model char "model" %}</td>
+                                <td class="params__col">{{ char.code }}</td>
+                                <td class="params__col">{{ char.description }}</td>
+                                {% if char.var1 %}
+                                <td class="params__col params__var-text">{{ char.var1 }}</td>
+                                {% endif %}
+                                {% if char.var2 %}
+                                <td class="params__col params__var-text">{{ char.var2 }}</td>
+                                {% endif %}
+                                {% if char.var3 %}
+                                <td class="params__col params__var-text">{{ char.var3 }}</td>
+                                {% endif %}
+                                {% if char.var4 %}
+                                <td class="params__col params__var-text">{{ char.var4 }}</td>
+                                {% endif %}
+                                {% if char.var5 %}
+                                <td class="params__col params__var-text">{{ char.var5 }}</td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card__item">
+                <div class="card__marks">
+                    <div class="card__marks-title"></div>
+                    <div class="card__marks-text">
+                        {{ object.marks }}
+                    </div>
+                </div>
+            </div>
+            <div class="card__item">
+                <div class="card__others">
+                    {% for product in other_products %}
+                    <a href="{% url 'products:product' product.id %}" class="other">
+                        <div class="other__tags">
+                            {% for tag in product.tags.all %}
+                            <div class="other__tag tag-new" style="background: {{tag.color}}">{{tag.title}}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="other__img">
+                            <img src="{{product.get_image_url}}" alt="">
+                        </div>
+                        <div class="other__title">
+                            {{product.title}}
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="card__item">
+                <div class="card__btns">
+                    <a href="#" class="card__btn-prev btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 12H5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 19L5 12L12 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Нет информации</span>                            
+                    </a>
+                    <a href="#" class="card__btn-next btn">
+                        <span>Нет информации</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12H19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 5L19 12L12 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>                            
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    // Product Btn
+    $(".product__btn").on('click', function() {
+        $('body').addClass('lock')
+        $('.section__form-contact').addClass("active")
+    })
+
+    // Menu
+    $('.menu__item').removeClass('active')
+    $('.menu__item[data-uid=1]').remove()
+    $('.menu__item[data-uid=2]').remove()
+    $('.menu__item[data-uid=3]').remove()
+
+    let productId = {{object.id}}
+    let productTitle = "{{object.title}}"
+
+    // Recently Viewed
+    if (localStorage.getItem('recentlyViewed')) {
+        let recentlyViewed = JSON.parse(localStorage.getItem("recentlyViewed"));
+        if (!(recentlyViewed.includes(productId))) {
+            recentlyViewed.push(productId)
+            localStorage.setItem("recentlyViewed", JSON.stringify(recentlyViewed));
+        } 
+    } else {
+        let recentlyViewed = []
+        recentlyViewed.push(productId)
+        localStorage.setItem("recentlyViewed", JSON.stringify(recentlyViewed));
+    }
+
+    let recentlyViewed = JSON.parse(localStorage.getItem("recentlyViewed"));
+    for (let i = 0; i < recentlyViewed.length; i++) {
+        $.get("/product/upload/" + recentlyViewed[i], function(data) {
+            let product = data.product
+            var html = "<div class='swiper-slide'><a href='/product/" + product.id + "/' class='slide'><div class='slide__tags'>"
+
+            for (let j = 0; j < product.tags.length; j++) {
+                    let tag = product.tags[j].title
+                    let color = product.tags[j].color
+                    html += "<div class='products__tag tag-new' style='background-color:" + color + "'>" + tag + "</div>"
+                }
+
+            html += "</div><div class='slide__img'>"
+
+            let imageUrl = product.image
+            let title = product.title
+
+            html += "<img src='" + imageUrl + "'' alt='img'></div><div class='slide__title'>" + title  + "</div></a></div>"
+
+            $(".viewed__swiper .swiper-wrapper").append(html)
+        })
+    }
+
+    var activePoint = Number(sessionStorage.getItem("activePoint"))
+    var path = JSON.parse(sessionStorage.getItem("path"))
+    var onRails = Number(sessionStorage.getItem("onRails"))
+
+    // Products Navigation
+    if (sessionStorage.getItem("path")) {
+
+        // If it is not the same product
+        if (path[activePoint][0] != productId) {
+            if (!(onRails)) {
+                activePoint += 1
+
+                if (path[activePoint]){
+                    path = path.slice(0, activePoint)
+                }
+
+                path.push([productId, productTitle])
+
+            } 
+
+            sessionStorage.setItem("path", JSON.stringify(path));
+            sessionStorage.setItem("activePoint", activePoint);
+        }
+
+        sessionStorage.setItem("onRails", 0);
+
+        // Edit prevBtn
+        let prevPointId = activePoint - 1
+        if (prevPointId != -1) {
+            let prevProductId = path[prevPointId][0]
+            let prevProductTitle = path[prevPointId][1]
+            $(".card__btn-prev").attr("href", window.location.pathname.slice(0,-2) + prevProductId)
+            $(".card__btn-prev span").html(prevProductTitle)
+        }  else {
+            $(".card__btn-prev span").html("Нет информации")
+        }
+
+        // Edit nextBtn
+        let nextPointId = activePoint + 1
+        // console.log("nextPointId:" + nextPointId)
+        // console.log("path:" + path)
+        // console.log("path.lengtt:" + path.length)
+        if (nextPointId != path.length) {
+            console.log("Inside")
+            let nextProductId = path[nextPointId][0]
+            let nextProductTitle = path[nextPointId][1]
+            $(".card__btn-next").attr("href", window.location.pathname.slice(0,-2) + nextProductId)
+            $(".card__btn-next span").html(nextProductTitle)
+        } else {
+            $(".card__btn-next span").html("Нет информации")
+        }
+
+    } else {
+        // Init
+        let path = [[productId, productTitle]]
+        sessionStorage.setItem("path", JSON.stringify(path));
+        sessionStorage.setItem("onRails", 0);
+        sessionStorage.setItem("activePoint", 0);
+    }
+
+    // Buttons activities
+    $('.card__btns .btn').on('click', function (e) {
+        e.preventDefault()
+        sessionStorage.setItem("onRails", 1);
+        if ($(this).hasClass("card__btn-prev")) {
+            if ($(this).attr("href") != "#") {
+                console.log("Click Prev")
+                sessionStorage.setItem("activePoint", activePoint-1);
+                window.location.href = $(this).attr("href")
+            }
+        } else if ($(this).hasClass("card__btn-next")) {
+            if ($(this).attr("href") != "#") {
+                console.log("Click Next")
+                sessionStorage.setItem("activePoint", activePoint+1);
+                window.location.href = $(this).attr("href")
+            }
+        }
+    })
+
+
+</script>
+{% endblock %}

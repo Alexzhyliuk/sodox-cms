@@ -1,0 +1,279 @@
+{% extends "home.html" %}
+{% load cms_tags sekizai_tags %}
+{% load static %}
+
+{% block page_title %}Каталог{% endblock %}
+
+{% block main %}
+<style>
+    .fake::after {
+        content: url({% static 'img/checkbox.svg' %});
+    }
+</style>
+{% block catalog_img %}
+{% static_placeholder "Catalog Image" %}
+{% endblock catalog_img %}
+<section class="section__catalog">
+    <div class="container">
+        <div class="catalog">
+            <div class="catalog__item left__item">
+                <div class="catalog__bar">
+
+                    <h3 class="catalog__title">
+                        {% block catalog_title %}
+                        {% static_placeholder "Catalog Title" %}
+                        {% endblock catalog_title %}
+                        <span class="reset">
+                            {% block catalog_reset %}
+                            {% static_placeholder "Catalog Reset" %}
+                            {% endblock catalog_reset %}
+                        </span>
+                    </h3>
+
+                    {% for manufacturer in manufacturers %}
+                    <div class="catalog__manufacturer" data-config-id="{{ forloop.counter }}">
+                        <img src="{{ manufacturer.image.url }}" alt="img">
+                    </div>
+                    <!-- Configurator -->
+                    <div class="configurator" data-id="{{ forloop.counter }}" data-manufacturer-id={{manufacturer.id}}>
+                        {% for category in manufacturer.categories.all %}
+                        {% if not category.overcategory %}
+                        <div class="configurator__item">
+                            <div class="configurator__item-title">
+                                <span>{{ category.title }}</span>
+                                <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
+                            </div>
+                            <ul class="configurator__list">
+                                {% for subcategory in category.subcategories.all %}
+                                <li data-uid={{subcategory.id}}>
+                                    <input type="checkbox" hidden class="configurator__item-checkbox">
+                                    <div class="fake"></div>
+                                    <span class="configurator__item-text">{{ subcategory.title }}</span>
+                                    <span class="configurator__item-count">({{ subcategory.products.count }})</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% for overcategory in manufacturer.overcategories.all %}
+                        <div class="additional">
+                            <div class="additional__title">
+                                <span>{{ overcategory.title }}</span>
+                                <svg class="configurator__arrow additional__arrow" width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 15.5L12 9.5L18 15.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="configurator__additional">
+                                {% for category in overcategory.categories.all %}
+                                <div class="configurator__item additional__item">
+                                    <div class="configurator__item-title">
+                                        <span>{{ category.title }}</span>
+                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
+                                    </div>
+                                    <ul class="configurator__list">
+                                        {% for subcategory in category.subcategories.all %}
+                                        <li data-uid={{subcategory.id}}>
+                                            <input type="checkbox" hidden class="configurator__item-checkbox">
+                                            <div class="fake"></div>
+                                            <span class="configurator__item-text">{{ subcategory.title }}</span>
+                                            <span class="configurator__item-count">({{ subcategory.products.count }})</span>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="catalog__item right__item">
+                <div class="catalog__img"></div>
+                <!-- Products -->
+                <div class="products">
+                    {% for product, tags in products.items %}
+                    <div class="products__item" data-subcategory-id={{product.subcategory.id}}>
+                        <div class="products__tags">
+                            {% for tag in tags %}
+                            <div class="products__tag" style="background-color: {{tag.color}};">
+                                {{ tag.title }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="products__img">
+                            <img src="{{ product.get_image_url }}" alt="img">
+                        </div>
+                        <div class="products__text">{{ product.title }}</div>
+                        <div class="products__price">{{ product.price }} BYN | шт.</div>
+                        <a href="{% url 'products:product' product.id %}" class="products__btn btn">купить</a>
+                    </div>
+                    {% endfor %}
+                </div>
+                <!-- Pagination -->
+                <div class="pagination">
+                    <img class="pagination__arrow pagination__arrow-prev" src="{% static 'img/pag_arrow.svg' %}" alt="arrow">
+                        
+                    <div class="pagination__items">
+                        {% for page in pages %}
+
+                        {% if forloop.last %}
+                        <div class="pagination__dots hidden" data-place="end">...</div>
+                        {% endif %}
+
+                        <div class="pagination__item {% if forloop.first %}active{% endif %}" data-id={{ page }}>{{ page }}</div>
+
+                        {% if forloop.first %}
+                        <div class="pagination__dots hidden" data-place="start">...</div>
+                        {% endif %}
+
+                        {% endfor %}
+                    </div>
+
+                    <img class="pagination__arrow pagination__arrow-next" src="{% static 'img/pag_arrow.svg' %}" alt="arrow">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    // Pagination
+    if ($('.pagination__item').length <= 7) {
+        $('.pagination__dots').remove()
+    }
+
+    // Menu
+    $('.menu__item').removeClass('active')
+    $('.menu__item[data-uid=1]').remove()
+    $('.menu__item[data-uid=2]').remove()
+    $('.menu__item[data-uid=3]').remove()
+    $('.menu__item[data-uid=4]').addClass('active')
+
+    // API Function
+    function appendProducts(path) {
+        console.log("UPLOAD " + path)
+        $.get(path, function(data) {
+            var products = data.products
+            for (let i = 0; i < products.length; i++) {
+                let id = products[i].id
+                let imageUrl = products[i].image
+                let title = products[i].title
+                let price = products[i].price
+                let subcategoryId = products[i].subcategory
+
+                let html = "<div class='products__item' data-subcategory-id=" + subcategoryId + "><div class='products__tags'>"
+                
+                for (let j = 0; j < products[i].tags.length; j++) {
+                    let tag = products[i].tags[j].title
+                    let color = products[i].tags[j].color
+                    html += "<div class='products__tag' style='background-color:" + color + "'>" + tag + "</div>"
+                }
+
+                html += "</div><div class='products__img'><img src='" + imageUrl + "' alt='img'></div><div class='products__text'>" + title + "</div><div class='products__price'>" + price + " BYN | шт.</div><a href='/product/" + id + "' %} class='products__btn btn'>купить</a></div>"
+                $('.products').append(html)
+            }
+        })
+    }
+
+    // Upload pages
+    let windowWidth = $(window).width()
+
+    $(document).ready(function() {
+        let uploadEdge = $(document).height() - 200
+        if (windowWidth <= 649.98) {
+            let nextPage = 2
+            $(document).on('scroll', function() {
+                if ($(document).scrollTop() + $(window).height() >= uploadEdge) {
+                     appendProducts("/products/upload/" + nextPage)
+                     nextPage += 1
+                     uploadEdge += $('.products__item').outerHeight() * 20 + 45
+                }
+            })
+    }
+    $(".pagination__item").on('click', function() {
+
+        $('.products__item').remove()
+        let page = $(this).attr("data-id")
+        $(".pagination__item.active").removeClass('active')
+        $(this).addClass("active")
+
+        setTimeout(() => {
+            appendProducts("/products/upload/" + page)
+        }, 500)
+
+        
+    })
+    })
+
+    // Configurator
+    if (window.location.href.indexOf("?manufacturer=") != -1) {
+        let manufacturerId = window.location.href.split("?manufacturer=")[1][0]
+        let newPath =  window.location.href.split("?manufacturer=")[0] + "?subcategory="
+        $(".configurator[data-manufacturer-id=" + manufacturerId + "] .configurator__list li").each(function(index) {
+            newPath += $(this).attr("data-uid") + ","
+        })
+        window.location.href = newPath
+    }
+
+    $('.configurator li').on('click', function() {
+
+        let uid = $(this).attr('data-uid')
+        let path = "/products/subcategory/upload/" + uid
+        if (!($(this).hasClass('checked'))) {
+            // if ($('.configurator li.checked').length == 0) {
+            //     $('.products__item').remove()
+            //     $('.pagination').remove()
+            // }
+            // appendProducts(path)
+
+            // Add uid to path
+            let newPath;
+            if (window.location.href.indexOf("?subcategory") == -1) {
+                newPath = window.location.href + "?subcategory=" + uid + ","
+            } else {
+                newPath = window.location.href + uid + ","
+            }
+            // window.history.pushState({path: newPath}, '', newPath)
+            window.location.href = newPath
+
+        } else if ($(this).hasClass('checked')) {
+            // if ($('.configurator li.checked').length != 1) {
+            //     $('.products__item[data-subcategory-id='+ uid +']').remove()
+            // } else {
+            //     location.reload()
+            // }
+
+            // Remove uid from path
+            let newPath;
+            if (window.location.href.split("?subcategory=")[1].length == 2) {
+                window.location.href = window.location.href.split("?subcategory=")[0]
+            } else {
+                newPath = window.location.href.replace(uid + ",", "")
+                // window.history.pushState({path: newPath}, '', newPath)
+                window.location.href = newPath
+            }
+        } 
+
+    })
+
+    let activeSubcateogry = {{subcategory_ids}}
+
+    $(".configurator__list li").each(function (index) {
+        if (activeSubcateogry.includes(Number($(this).attr('data-uid')))) {
+            $(this).addClass("checked")
+            $(this).parent(".configurator__list").parent(".configurator__item").addClass("open")
+            $(this).parent(".configurator__list").parent(".configurator__item").parent(".configurator__additional").parent(".additional").parent(".configurator").addClass("active")
+            $(this).parent(".configurator__list").parent(".configurator__item").parent(".configurator__additional").parent(".additional").addClass("open")
+            $(this).parent(".configurator__list").parent(".configurator__item").parent(".configurator").addClass("active")
+        }
+    })
+
+    $(".reset").on('click', function() {
+        window.location.href = window.location.href.split("?subcategory=")[0]
+    })
+
+</script>
+{% endblock %}

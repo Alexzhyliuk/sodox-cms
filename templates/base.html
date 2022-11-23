@@ -1,0 +1,226 @@
+{% load cms_tags sekizai_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap" rel="stylesheet">
+
+    <title>{% block title %}Главная{% endblock %}</title>
+
+    {% block extra_head %}{% endblock %}
+
+    {% render_block "css" %}
+
+</head>
+    <body>
+        {% cms_toolbar %}
+        {% render_block "js" %}
+        <!-- Header -->
+        <header class="header">
+            <div class="header__topbar">
+                <div class="container">
+                    <div class="topbar">
+                        <div class="header__info">
+                            <div class="header__text">
+                                <img src="{% static 'img/phone.svg' %}" alt="img">
+                                <span>+62 899 7789</span>
+                            </div>
+                            <div class="header__text">
+                                <img src="{% static 'img/clock.svg' %}" alt="img">
+                                <span>07:00 - 16:00</span>
+                            </div>
+                            <div class="header__text">
+                                <img src="{% static 'img/location.svg' %}" alt="img">
+                                <span>г. Гомель, ул. Объездная,17А, г. Москва, ул. Красная, 4</span>
+                            </div>
+                        </div>
+                        <div class="header__info-btn">
+                            <a href="#" class="btn">связаться с нами</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <nav>
+                <div class="container">
+                    <div class="navbar">
+                        <div class="navbar__logo"> <a href="#"> <img src="{% static 'img/logo.svg' %}" alt="img"> </a> </div>
+                        <ul class="navabr__menu menu">
+                            <li class="menu__item active" data-uid=0><a href="#" class="menu__item-link">Главная</a></li>
+                            <li class="menu__item" data-uid=1><a href="#about-section" class="menu__item-link">О Нас</a></li>
+                            <li class="menu__item" data-uid=2><a href="#service-section" class="menu__item-link">Наши Услуги</a></li>
+                            <li class="menu__item" data-uid=3><a href="#products-section" class="menu__item-link">Наша Продукция</a></li>
+                            <li class="menu__item" data-uid=4><a href="#" class="menu__item-link">Контакты</a></li>
+                            {% if request.user.is_superuser %}
+                            <li class="menu__item"><a href="#" class="menu__item-link">Добваить товары через csv</a></li>
+                            {% endif %}
+                        </ul>
+                        <div class="burger">
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+        </header>
+
+        <!-- Contact Form -->
+        <section class="section__form-contact">
+            <form action="create_application/" method="POST" class="form__contact">
+                <label class="form__label">
+                    <span>Ваше имя <span class="necessary">*</span>
+                        <svg class="form__cancel" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 4L4 20" stroke="#666665"/>
+                            <path d="M4 4L20 20" stroke="#666665"/>
+                        </svg>                    
+                    </span>
+                    <div class="form__input">
+                        <input type="text" required placeholder="Иван" id="id_name" name="name">
+                        <img src="{% static 'img/user.svg' %}" alt="img">
+                    </div>
+                </label>
+                <label class="form__label">
+                    <span>Ваш телефон <span class="necessary">*</span> </span>
+                    <div class="form__input">
+                        <input type="tel" required data-tel-input placeholder="+7 (907) 123-45-67" id="id_phone" name="phone">
+                        <img src="{% static 'img/phone-form.svg' %}" alt="img">
+                    </div>
+                </label>
+                <label class="form__label">
+                    <span>Ваша электронная почта</span>
+                    <div class="form__input">
+                        <input type="email" placeholder="mail@mail.com" id="id_email" name="email">
+                        <img src="{% static 'img/message.svg' %}" alt="img">
+                    </div>
+                </label>
+                <label class="form__label">
+                    <span>Ваше сообщение</span>
+                    <div class="form__input">
+                        <textarea id="id_message" name="message" cols="30" rows="10" placeholder="Введите текст..."></textarea>
+                    </div>
+                </label>
+                <!-- {{ form.as_p }} -->
+                {% csrf_token %}
+                <input type="submit" class="btn form__submit">
+            </form>
+        </section>
+
+        <main>
+
+            {% block main_content %}
+			{% endblock %}
+
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="footer">
+                    <div class="footer__item">
+                        <div class="footer__logo">
+                            <img src="{% static 'img/footer_logo.png' %}" alt="img">
+                        </div>
+                    </div>
+                    <div class="footer__item">
+                        <div class="footer__item-title">Usefull Link</div>
+                        <ul class="footer__list">
+                            <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Главная</a></div>
+                            <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Наши товары</a></div>
+                            <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Услуги</a></div>
+                            <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> О нас</a></div>
+                            <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Контакты</a></div>
+                        </ul>
+                    </div>
+                    <div class="footer__item">
+                        <div class="footer__item-title">Head Office</div>
+                        <div class="footer__text">4517 Washington Ave. Manchester, Kentucky 39495 <br>
+                            deanna.curtis@example.com
+                            (671) 555-0110</div>
+                    </div>
+                    <div class="footer__item">
+                        <div class="footer__item-title">Opening Hour</div>
+                        <div class="footer__text">
+                            Mon - Sat : 8:00 - 17:00 <br>
+                            Sun : Closed
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="copy">
+                <div class="container">
+                    <div class="copy__text">Copyright © 2022. All right reserved</div>
+                </div>
+            </div>
+        </footer>
+
+        <script src="{% static 'js/script.min.js' %}"></script>
+        <script>
+            let phoneInputs = document.querySelectorAll('input[data-tel-input]')
+
+            let getInputNumbersValue = function(input) {
+                return input.value.replace(/\D/g, "")
+            }
+
+            let onPhoneInput = function(e) {
+                let input = e.target,
+                    inputNumbersValue = getInputNumbersValue(input),
+                    formattedInputValue = "",
+                    selectionStart = input.selectionStart
+
+                if (!inputNumbersValue) {
+                    return input.value = ""
+                }
+
+                if (input.value.length != selectionStart) {
+                    return
+                }
+
+                if (["7", "8", "9"].indexOf(inputNumbersValue[0]) > -1) {
+                    // Russian phone number
+                    if (inputNumbersValue[0] == "9") inputNumbersValue = "7" + inputNumbersValue
+                    let firstSymbols = (inputNumbersValue[0] == "8") ? "8" : "+7"
+                    formattedInputValue = firstSymbols + " "
+                    if (inputNumbersValue.length > 1){
+                        formattedInputValue += "(" + inputNumbersValue.substring(1,4)
+                    }
+                    if (inputNumbersValue.length >= 5){
+                        formattedInputValue += ") " + inputNumbersValue.substring(4,7)
+                    }
+                    if (inputNumbersValue.length >= 8){
+                        formattedInputValue += "-" + inputNumbersValue.substring(7,9)
+                    }
+                    if (inputNumbersValue.length >= 10){
+                        formattedInputValue += "-" + inputNumbersValue.substring(9,11)
+                    }
+                } else {
+                    // Not Russian phone number
+                    formattedInputValue = "+" + inputNumbersValue.substring(0, 16)
+                }
+                input.value = formattedInputValue;
+            }
+
+            let onPhoneKeyDown = function(e) {
+                let input = e.target
+                if (e.keyCode == 8 && getInputNumbersValue(input).length == 1) {
+                    input.value = ""
+                }
+            }
+
+            for (i = 0; i<phoneInputs.length; i++) {
+                let input = phoneInputs[i];
+                input.addEventListener('input', onPhoneInput)
+                input.addEventListener('keydown', onPhoneKeyDown)
+            }
+        </script>
+    </body>
+</html>

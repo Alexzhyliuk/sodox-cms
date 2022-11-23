@@ -1,0 +1,250 @@
+{% extends "home.html" %}
+{% load cms_tags sekizai_tags %}
+{% load static %}
+
+{% block main %}
+
+            {% block hero_bg %}
+            {% static_placeholder "Hero Background" %}
+            {% endblock hero_bg %}
+            <!-- Hero -->
+            <section class="section__hero">
+    <div class="container">
+        <div class="hero">
+            <h1 class="hero__title">
+                    {% block title %}
+                {% static_placeholder "Main Title" %}
+                {% endblock title %}
+             </h1>
+            <ul class="hero__list">
+                <li class="hero__list-item">
+                    <img src="{% static 'img/check.svg' %}" alt="img">
+                    <span>
+                        {% block hero_item1 %}
+                        {% static_placeholder "Hero Item 1" %}
+                        {% endblock hero_item1 %}
+                    </span>
+                </li>
+                <li class="hero__list-item">
+                    <img src="{% static 'img/check.svg' %}" alt="img">
+                    <span>
+                    {% block hero_item2 %}
+                        {% static_placeholder "Hero Item 2" %}
+                        {% endblock hero_item2 %}</span>
+                </li>
+                <li class="hero__list-item">
+                    <img src="{% static 'img/check.svg' %}" alt="img">
+                    <span>
+                    {% block hero_item3 %}
+                        {% static_placeholder "Hero Item 3" %}
+                        {% endblock hero_item3 %}</span>
+                </li>
+            </ul>
+            <a href="{% url 'products:products' %}" class="btn btn-arrow hero__btn">
+                  {% block hero_btn %}
+                    {% static_placeholder "Hero Button" %}
+                    {% endblock hero_btn %}
+                <img src="{% static 'img/arrow.svg' %}" alt="img">
+            </a>
+        </div>
+    </div>
+</section>
+
+            <!-- About -->
+            <section class="section__about" id="about-section">
+    <div class="container">
+        <div class="about">
+            <div class="about__item left__item">
+                <h4 class="section__subtitle title__left">
+                    {% block about %}
+                    {% static_placeholder "About" %}
+                    {% endblock about %}
+                </h4>
+                <h3 class="section__title title__left about__title">
+                    {% block about_title %}
+                        {% static_placeholder "About Title" %}
+                        {% endblock about_title %}
+                </h3>
+                <div class="about__text">
+                    {% block about_text1 %}
+                        {% static_placeholder "About Text 1" %}
+                        {% endblock about_text1 %}
+             </div>
+            </div>
+            <div class="about__item right__item">
+                <div class="about__text">
+                    {% block about_text2 %}
+                        {% static_placeholder "About Text 2" %}
+                        {% endblock about_text2 %}
+                </div>
+                <div class="about__read-more">
+                    <span>Читать далее</span>
+                    <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.5 10.75L12 14.25L15.5 10.75" stroke="black" stroke-linejoin="round"/>
+                    </svg>                        
+                </div>
+            </div>
+        </div>
+        <a href="{% url 'products:products' %}" class="btn btn-arrow about__btn">
+            {% block about_btn %}
+              {% static_placeholder "About Button" %}
+              {% endblock about_btn %}
+            <img src="{% static 'img/arrow.svg' %}" alt="img">
+        </a>
+    </div>
+</section>
+
+            <!-- Service -->
+            <section class="section__service" id="service-section">
+    <div class="container">
+        <h4 class="section__subtitle">
+                {% block service_subtitle %}
+            {% static_placeholder "Service Subitle" %}
+            {% endblock service_subtitle %}
+        </h4>
+        <h3 class="section__title service__title">
+               {% block service_title %}
+            {% static_placeholder "Service Title" %}
+            {% endblock service_title %}
+        </h3>
+        <div class="service">
+            {% block service %}
+            {% static_placeholder "Service" %}
+            {% endblock service %}
+        </div>
+    </div>
+</section>
+            
+            <!-- Tasks -->
+            <section class="section__tasks">
+    <div class="container">
+        <div class="tasks">
+            <div class="tasks__item left__item">
+                <h3 class="section__title tasks__title title__left">
+                    {% block tasks_title %}
+                    {% static_placeholder "Tasks Title" %}
+                    {% endblock tasks_title %}
+                </h3>
+                <div class="tasks__info">
+                    {% block tasks_subtitle %}
+                    {% static_placeholder "Tasks Subtitle" %}
+                    {% endblock tasks_subtitle %}
+                 </div>
+                <div class="tasks__img">
+                    {% block tasks_img %}
+                    {% static_placeholder "Tasks Image" %}
+                    {% endblock tasks_img %}
+                </div>
+            </div>
+            <div class="tasks__item right__item">
+                <ul class="tasks__list">
+                            {% block tasks %}
+                    {% static_placeholder "Tasks" %}
+                    {% endblock tasks %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+            <!-- Products -->
+            <section class="section__products" id="products-section">
+    <div class="container">
+        <div class="products">
+            <h3 class="section__title">
+                {% block products_title %}
+               {% static_placeholder "Products Title" %}
+               {% endblock products_title %}
+            </h3>
+            <div class="products__tabs">
+                <div class="products__bar">
+                            {% for manufacturer in manufacturers %}
+                            {% if forloop.first %}
+                            <div class="products__bar-item active" data-id="{{manufacturer.id}}">
+                            {% else %}
+                            <div class="products__bar-item" data-id="{{manufacturer.id}}">
+                            {% endif %}
+                               <img src="{{manufacturer.inactive_image.url}}" alt="img" class="default">
+                               <img src="{{manufacturer.image.url}}" alt="img" class="active">
+                            </div>
+                            {% endfor %}
+                </div>
+                {% for manufacturer, products in tabs.items %}
+                <div class="products__tab {% if forloop.first %}active{% endif %}" data-id="{{manufacturer.id}}">
+                    {% for product in products %}
+                    <div class="products__tab-item">
+                        <div class="products__tab-img">
+                            {% if product.image %}
+                            <img src="{{product.image.url}}" alt="">
+                            {% else %}
+                            <img src="/{{product.image_choice}}" alt="">
+                            {% endif %}
+                        </div>
+                        <div class="products__tab-title">{{product.title}}</div>
+                        <div class="products__tab-hover products__hover">
+                            <div class="products__hover-title">{{product.title}}</div>
+                            <div class="products__hover-text">{{product.short_descrition}} </div>
+                            <a href="{% url 'products:product' product.id %}" class="products__hover-btn btn btn-arrow">
+                                Подробнее
+                                <img src="{% static 'img/arrow.svg' %}" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+            <!-- Customers -->
+            <section class="section__customers">
+    <div class="container">
+        <h3 class="section__title">
+            {% block customers_title %}
+              {% static_placeholder "Customers Title" %}
+              {% endblock customers_title %}
+        </h3>
+        <div class="customers">
+            {% block customers %}
+              {% static_placeholder "Customers" %}
+              {% endblock customers %}
+        </div>
+    </div>
+</section>
+
+            <!-- Company -->
+            <section class="section__company">
+    <div class="container">
+        <h4 class="section__subtitle">
+            {% block company_subtitle1 %}
+              {% static_placeholder "Company Subtitle 1" %}
+              {% endblock company_subtitle1 %}
+        </h4>
+        <h3 class="section__title">
+           {% block company_title %}
+              {% static_placeholder "Company Title" %}
+              {% endblock company_title %}
+        </h3>
+        <div class="company">
+            {% block companies1 %}
+              {% static_placeholder "Companies 1" %}
+              {% endblock companies1 %}
+        </div>
+        <h4 class="section__subtitle subtitle__company">
+            {% block company_subtitle2 %}
+              {% static_placeholder "Company Subtitle 2" %}
+              {% endblock company_subtitle2 %}
+        </h4>
+        <div class="company">
+            {% block companies2 %}
+              {% static_placeholder "Companies 2" %}
+              {% endblock companies2 %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+

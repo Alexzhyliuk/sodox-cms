@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Товары</title>
+	<style>
+		body {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.row {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 40px;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		{% for product in products %}
+		<div class="row">
+			<div class="product_id">{{product.id}}</div>
+			<div class="product_title">{{product.title}}</div>
+		</div>
+		<hr>
+		{% endfor %}
+	</div>
+</body>
+</html>

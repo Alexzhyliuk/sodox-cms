@@ -1,0 +1,413 @@
+{% load cms_tags sekizai_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-color-scheme="light">
+    <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap" rel="stylesheet">
+
+    <!-- Yandex Map -->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=50d1c63f-8679-47a9-8d1a-01ba051a5cb1&lang=ru_RU" type="text/javascript">
+    </script>
+
+    <!-- SWIPER -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <script type="module">
+        import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.esm.browser.min.js'
+    </script>
+
+    <title>{% block page_title %}Главная{% endblock %}</title>
+    {% render_block "css" %}
+
+    {% block extra_head %}
+    {% endblock %}
+</head>
+    <body>
+    		{% cms_toolbar %}
+			{% render_block "js" %}
+        <!-- Header -->
+        <header class="header">
+    <div class="header__topbar">
+        <div class="container">
+            <div class="topbar">
+                <div class="header__info">
+                    <div class="header__text">
+                        {% block phone_icon %}
+                     	{% static_placeholder "Phone Icon" %}
+                     	{% endblock phone_icon %}
+                        <span>
+                        	{% block phone %}
+                        	{% static_placeholder "Phone" %}
+                        	{% endblock phone %}
+                        </span>
+                    </div>
+                    <div class="header__text">
+                        {% block time_icon %}
+                     	{% static_placeholder "Time Icon" %}
+                     	{% endblock time_icon %}
+                        <span>
+                        	{% block time %}
+                        	{% static_placeholder "Time" %}
+                        	{% endblock time %}
+                        </span>
+                    </div>
+                    <div class="header__text">
+                        {% block adress_icon %}
+                     	{% static_placeholder "Adress Icon" %}
+                     	{% endblock adress_icon %}
+                        <span>
+                        	{% block adress %}
+                        	{% static_placeholder "Adress" %}
+                        	{% endblock adress %}
+                        </span>
+                    </div>
+                </div>
+                <div class="header__info-btn">
+                    <a href="#" class="btn">
+                    	{% block contact_header %}
+                     {% static_placeholder "Contact Header" %}
+                     {% endblock contact_header %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav>
+        <div class="container">
+            <div class="navbar">
+                <div class="navbar__logo"> 
+                	<a href="#"> 
+                	{% block logo_header %}
+               	{% static_placeholder "Logo Header" %}
+               	{% endblock logo_header %} 
+                  </a>
+                </div>
+                <ul class="navbar__menu menu">
+                    <li data-uid=0 class="menu__item active"><a href="{% url 'products:index' %}" class="menu__item-link">Главная</a></li>
+                    <li data-uid=1 class="menu__item"><a href="#about-section" class="menu__item-link">О Нас</a></li>
+                    <li data-uid=2 class="menu__item"><a href="#service-section" class="menu__item-link">Наши Услуги</a></li>
+                    <li data-uid=3 class="menu__item"><a href="#products-section" class="menu__item-link">Наша Продукция</a></li>
+                    <li data-uid=4 class="menu__item"><a href="{% url 'products:products' %}" class="menu__item-link">Каталог</a></li>
+                    <li data-uid=5 class="menu__item"><a href="{% url 'products:contacts' %}" class="menu__item-link">Контакты</a></li>
+                    {% if request.user.is_superuser %}
+                    <li class="menu__item"><a href="{% url 'products:add_products' %}" class="menu__item-link">CSV товары</a></li>
+                    <li class="menu__item"><a href="{% url 'products:add_products_characteristics' %}" class="menu__item-link">CSV х-ки</a></li>
+                    {% endif %}
+                </ul>
+                <div class="burger">
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+</header>
+<div class="backing"></div>
+<section class="section__menumobile">
+    <div class="menumobile">
+        <div class="menumobile__tabs tabs">
+            <div class="tabs__titles tabs__titles-menumobile">
+                <div class="tabs__title tabs__title-menumobile active" data-tab-id="1">
+                    Меню
+                </div>
+                <div class="tabs__title tabs__title-menumobile catalog-menu" data-tab-id="2">
+                    Производители
+                </div>
+            </div>
+            <div class="tab tab-menumobile active" data-tab-id="1">
+                <ul class="tab__menu menu">
+                    <li data-uid=0 class="menu__item active"><a href="{% url 'products:index' %}" class="menu__item-link">Главная</a></li>
+                    <li data-uid=1 class="menu__item"><a href="#about-section" class="menu__item-link">О Нас</a></li>
+                    <li data-uid=2 class="menu__item"><a href="#service-section" class="menu__item-link">Наши Услуги</a></li>
+                    <li data-uid=3 class="menu__item"><a href="#products-section" class="menu__item-link">Наша Продукция</a></li>
+                    <li data-uid=4 class="menu__item"><a href="{% url 'products:products' %}" class="menu__item-link">Каталог</a></li>
+                    <li data-uid=5 class="menu__item"><a href="{% url 'products:contacts' %}" class="menu__item-link">Контакты</a></li>
+                    {% if request.user.is_superuser %}
+                    <li class="menu__item"><a href="{% url 'products:add_products' %}" class="menu__item-link">CSV товары</a></li>
+                    <li class="menu__item"><a href="{% url 'products:add_products_characteristics' %}" class="menu__item-link">CSV х-ки</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="tab tab-menumobile" data-tab-id="2">
+                <div class="catalog">
+
+                    <div class="catalog__manufacturer" data-config-id="1">
+                        <img src="{% static 'img/tab1act.png' %}" class="active__img" alt="img">
+                        <img src="{% static 'img/tab1def.png' %}" class="passive__img" alt="img">
+                    </div>
+                    <!-- Configurator -->
+                    <div class="configurator" data-id="1">
+                        <div class="additional">
+                            <div class="additional__title">
+                                <span>Сервоприводы для систем ЧПУ</span>
+                                <svg class="configurator__arrow additional__arrow" width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 15.5L12 9.5L18 15.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="configurator__additional">
+                                <div class="configurator__item additional__item">
+                                    <div class="configurator__item-title">
+                                        <span>Системы управления для токарных станков</span>
+                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
+                                    </div>
+                                </div>
+                                <div class="configurator__item additional__item">
+                                    <div class="configurator__item-title">
+                                        <span>Системы управления для токарных станков</span>
+                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="catalog__manufacturer" data-config-id="2">
+                        <img src="{% static 'img/tab1act.png' %}" class="active__img" alt="img">
+                        <img src="{% static 'img/tab1def.png' %}" class="passive__img" alt="img">
+                    </div>
+                    <!-- Configurator -->
+                    <div class="configurator" data-id="2">
+                        <div class="additional">
+                            <div class="additional__title">
+                                <span>Сервоприводы для систем ЧПУ</span>
+                                <svg class="configurator__arrow additional__arrow" width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 15.5L12 9.5L18 15.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="configurator__additional">
+                                <div class="configurator__item additional__item">
+                                    <div class="configurator__item-title">
+                                        <span>Системы управления для токарных станков</span>
+                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
+                                    </div>
+                                </div>
+                                <div class="configurator__item additional__item">
+                                    <div class="configurator__item-title">
+                                        <span>Системы управления для токарных станков</span>
+                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="catalog__manufacturer" data-config-id="3">
+                        <img src="{% static 'img/tab1act.png' %}" class="active__img" alt="img">
+                        <img src="{% static 'img/tab1def.png' %}" class="passive__img" alt="img">
+                    </div>
+                    <!-- Configurator -->
+                    <div class="configurator" data-id="3">
+                        <div class="additional">
+                            <div class="additional__title">
+                                <span>Сервоприводы для систем ЧПУ</span>
+                                <svg class="configurator__arrow additional__arrow" width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 15.5L12 9.5L18 15.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="configurator__additional">
+                                <div class="configurator__item additional__item">
+                                    <div class="configurator__item-title">
+                                        <span>Системы управления для токарных станков</span>
+                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
+                                    </div>
+                                </div>
+                                <div class="configurator__item additional__item">
+                                    <div class="configurator__item-title">
+                                        <span>Системы управления для токарных станков</span>
+                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="catalog__manufacturer" data-config-id="4">
+                        <img src="{% static 'img/tab1act.png' %}" class="active__img" alt="img">
+                        <img src="{% static 'img/tab1def.png' %}" class="passive__img" alt="img">
+                    </div>
+                    <!-- Configurator -->
+                    <div class="configurator" data-id="4">
+                        <div class="additional">
+                            <div class="additional__title">
+                                <span>Сервоприводы для систем ЧПУ</span>
+                                <svg class="configurator__arrow additional__arrow" width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 15.5L12 9.5L18 15.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="configurator__additional">
+                                <div class="configurator__item additional__item">
+                                    <div class="configurator__item-title">
+                                        <span>Системы управления для токарных станков</span>
+                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
+                                    </div>
+                                </div>
+                                <div class="configurator__item additional__item">
+                                    <div class="configurator__item-title">
+                                        <span>Системы управления для токарных станков</span>
+                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="menumobile__btn menumobile__btn-more hidden">
+                        <span>ПОКАЗАТЬ ЕЩЕ</span>
+                        <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 9.5L12 15.5L6 9.5" stroke="#B50000" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>                            
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+        <!-- Contact Form -->
+        <section class="section__form-contact">
+            <form action="/create_application/" method="POST" class="form__contact">
+                <label class="form__label">
+                    <span>
+                        {% block form_name %}
+                        {% static_placeholder "Form Name" %}
+                        {% endblock form_name %}
+                        <svg class="form__cancel" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 4L4 20" stroke="#666665"/>
+                            <path d="M4 4L20 20" stroke="#666665"/>
+                        </svg>                    
+                    </span>
+                    <div class="form__input">
+                        <input type="text" required placeholder="Иван" id="id_name" name="name">
+                        <img src="{% static 'img/user.svg' %}" alt="img">
+                    </div>
+                </label>
+                <label class="form__label">
+                    <span>
+                        {% block form_phone %}
+                        {% static_placeholder "Form Phone" %}
+                        {% endblock form_phone %}
+                    </span>
+                    <div class="form__input">
+                        <input type="tel" required data-tel-input placeholder="+7 (907) 123-45-67" id="id_phone" name="phone">
+                        <img src="{% static 'img/phone-form.svg' %}" alt="img">
+                    </div>
+                </label>
+                <label class="form__label">
+                    <span>
+                        {% block form_email %}
+                        {% static_placeholder "Form Email" %}
+                        {% endblock form_email %}
+                    </span>
+                    <div class="form__input">
+                        <input type="email" placeholder="mail@mail.com" id="id_email" name="email">
+                        <img src="{% static 'img/message.svg' %}" alt="img">
+                    </div>
+                </label>
+                <label class="form__label">
+                    <span>
+                        {% block form_message %}
+                        {% static_placeholder "Form Message" %}
+                        {% endblock form_message %}
+                    </span>
+                    <div class="form__input">
+                        <textarea id="id_message" name="message" cols="30" rows="10" placeholder="Введите текст..."></textarea>
+                    </div>
+                </label>
+                {% csrf_token %}
+                <button type="submit" class="btn form__submit">
+                        {% block form_btn %}
+                        {% static_placeholder "Form Button" %}
+                        {% endblock form_btn %}
+                </button>
+            </form>
+        </section>
+
+        <main>
+
+        	{% block main %}
+        	{% endblock main %}
+
+        </main>
+
+        <!-- Footer -->
+        <footer>
+    <div class="container">
+        <div class="footer">
+            <div class="footer__item">
+                <div class="footer__logo">
+                    {% block footer_logo %}
+		              {% static_placeholder "Footer Logo" %}
+		              {% endblock footer_logo %}
+                </div>
+            </div>
+            <div class="footer__item">
+                <div class="footer__item-title">
+                    {% block footer_menu_title %}
+		              {% static_placeholder "Footer Menu Title" %}
+		              {% endblock footer_menu_title %}
+                </div>
+                <ul class="footer__list">
+                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Главная</a></div>
+                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Наши товары</a></div>
+                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Услуги</a></div>
+                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> О нас</a></div>
+                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Контакты</a></div>
+                </ul>
+            </div>
+            <div class="footer__item">
+                <div class="footer__item-title">
+                    {% block footer_office_title %}
+		              {% static_placeholder "Footer Office Title" %}
+		              {% endblock footer_office_title %}
+                </div>
+                <div class="footer__text">
+                    {% block footer_office_text %}
+		              {% static_placeholder "Footer Office Text" %}
+		              {% endblock footer_office_text %}
+		           </div>
+            </div>
+            <div class="footer__item">
+                <div class="footer__item-title">
+                    {% block footer_time_title %}
+		              {% static_placeholder "Footer Time Title" %}
+		              {% endblock footer_time_title %}
+                </div>
+                <div class="footer__text">
+                    {% block footer_time_text %}
+		              {% static_placeholder "Footer Time Text" %}
+		              {% endblock footer_time_text %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="copy">
+        <div class="container">
+            <div class="copy__text">
+                {% block footer_copy %}
+		          {% static_placeholder "Footer Copyright" %}
+		          {% endblock footer_copy %}
+            </div>
+        </div>
+    </div>
+</footer>
+
+        <script src="{% static 'js/script.js' %}"></script>
+        <script>
+            if ($(".cms-toolbar").length) {
+                let transition = $('.cms-toolbar').height()
+                $("header").css("top", transition + "px")
+            }
+        </script>
+    </body>
+</html>
