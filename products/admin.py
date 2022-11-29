@@ -1,23 +1,5 @@
 from django.contrib import admin
-from products.models import Application, Product, ProductOrder, ProductCharacteristic, ProductImage, Tag, Manufacturer, Overcategory, Category, Subcategory, Coordinate
-
-
-class ProductAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-
-admin.site.register(Product, ProductAdmin)
-
-
-class ProductCharacteristicAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-
-admin.site.register(ProductCharacteristic, ProductCharacteristicAdmin)
-
-
-class ProductOrderAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-
-admin.site.register(ProductOrder, ProductOrderAdmin)
+from products.models import *
 
 
 class ApplicationAdmin(admin.ModelAdmin):
@@ -26,28 +8,10 @@ class ApplicationAdmin(admin.ModelAdmin):
 admin.site.register(Application, ApplicationAdmin)
 
 
-class ProductImageAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-
-admin.site.register(ProductImage, ProductImageAdmin)
-
-
-class TagAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-
-admin.site.register(Tag, TagAdmin)
-
-
 class ManufacturerAdmin(admin.ModelAdmin):
     readonly_fields = ('id',)
 
 admin.site.register(Manufacturer, ManufacturerAdmin)
-
-
-class OvercategoryAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-
-admin.site.register(Overcategory, OvercategoryAdmin)
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -60,6 +24,24 @@ class SubcategoryAdmin(admin.ModelAdmin):
     readonly_fields = ('id',)
 
 admin.site.register(Subcategory, SubcategoryAdmin)
+
+
+class NomenclatureAdmin(admin.ModelAdmin):
+    readonly_fields = ('id',)
+
+admin.site.register(Nomenclature, NomenclatureAdmin)
+
+
+class NomenclatureRowAdmin(admin.ModelAdmin):
+    readonly_fields = ('id',)
+
+admin.site.register(NomenclatureRow, NomenclatureRowAdmin)
+
+
+class DownloadsAdmin(admin.ModelAdmin):
+    readonly_fields = ('id',)
+
+admin.site.register(Downloads, DownloadsAdmin)
 
 
 class CoordinateAdmin(admin.ModelAdmin):

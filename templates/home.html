@@ -97,12 +97,11 @@
                     <li data-uid=0 class="menu__item active"><a href="{% url 'products:index' %}" class="menu__item-link">Главная</a></li>
                     <li data-uid=1 class="menu__item"><a href="#about-section" class="menu__item-link">О Нас</a></li>
                     <li data-uid=2 class="menu__item"><a href="#service-section" class="menu__item-link">Наши Услуги</a></li>
-                    <li data-uid=3 class="menu__item"><a href="#products-section" class="menu__item-link">Наша Продукция</a></li>
-                    <li data-uid=4 class="menu__item"><a href="{% url 'products:products' %}" class="menu__item-link">Каталог</a></li>
-                    <li data-uid=5 class="menu__item"><a href="{% url 'products:contacts' %}" class="menu__item-link">Контакты</a></li>
+                    <li data-uid=3 class="menu__item"><a href="{% url 'products:categories' %}" class="menu__item-link">Каталог</a></li>
+                    <li data-uid=4 class="menu__item"><a href="{% url 'products:contacts' %}" class="menu__item-link">Контакты</a></li>
                     {% if request.user.is_superuser %}
-                    <li class="menu__item"><a href="{% url 'products:add_products' %}" class="menu__item-link">CSV товары</a></li>
-                    <li class="menu__item"><a href="{% url 'products:add_products_characteristics' %}" class="menu__item-link">CSV х-ки</a></li>
+                    <li class="menu__item"><a href="" class="menu__item-link">CSV товары</a></li>
+                    <li class="menu__item"><a href="" class="menu__item-link">CSV х-ки</a></li>
                     {% endif %}
                 </ul>
                 <div class="burger">
@@ -130,137 +129,47 @@
                     <li data-uid=0 class="menu__item active"><a href="{% url 'products:index' %}" class="menu__item-link">Главная</a></li>
                     <li data-uid=1 class="menu__item"><a href="#about-section" class="menu__item-link">О Нас</a></li>
                     <li data-uid=2 class="menu__item"><a href="#service-section" class="menu__item-link">Наши Услуги</a></li>
-                    <li data-uid=3 class="menu__item"><a href="#products-section" class="menu__item-link">Наша Продукция</a></li>
-                    <li data-uid=4 class="menu__item"><a href="{% url 'products:products' %}" class="menu__item-link">Каталог</a></li>
-                    <li data-uid=5 class="menu__item"><a href="{% url 'products:contacts' %}" class="menu__item-link">Контакты</a></li>
+                    <li data-uid=3 class="menu__item"><a href="{% url 'products:categories' %}" class="menu__item-link">Каталог</a></li>
+                    <li data-uid=4 class="menu__item"><a href="{% url 'products:contacts' %}" class="menu__item-link">Контакты</a></li>
                     {% if request.user.is_superuser %}
-                    <li class="menu__item"><a href="{% url 'products:add_products' %}" class="menu__item-link">CSV товары</a></li>
-                    <li class="menu__item"><a href="{% url 'products:add_products_characteristics' %}" class="menu__item-link">CSV х-ки</a></li>
+                    <li class="menu__item"><a href="" class="menu__item-link">CSV товары</a></li>
+                    <li class="menu__item"><a href="" class="menu__item-link">CSV х-ки</a></li>
                     {% endif %}
                 </ul>
             </div>
+            {% if manufacturers %}
             <div class="tab tab-menumobile" data-tab-id="2">
                 <div class="catalog">
 
-                    <div class="catalog__manufacturer" data-config-id="1">
-                        <img src="{% static 'img/tab1act.png' %}" class="active__img" alt="img">
-                        <img src="{% static 'img/tab1def.png' %}" class="passive__img" alt="img">
+                    {% for manufacturer in manufacturers %}
+                    <div class="catalog__manufacturer {% if forloop.first %}active{% endif %}" data-config-id="{{ forloop.counter }}">
+                        <img src="{{ manufacturer.get_image_url }}" class="active__img" alt="img">
+                        <img src="{{ manufacturer.get_inactive_image_url }}" class="passive__img" alt="img">
                     </div>
                     <!-- Configurator -->
-                    <div class="configurator" data-id="1">
+                    <div class="configurator {% if forloop.first %}active{% endif %}" data-id="{{ forloop.counter }}">
+                        {% for category in manufacturer.categories.all %}
                         <div class="additional">
                             <div class="additional__title">
-                                <span>Сервоприводы для систем ЧПУ</span>
+                                <a href="{% url 'products:category' category.id %}">{{ category.title }}</a>
                                 <svg class="configurator__arrow additional__arrow" width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M6 15.5L12 9.5L18 15.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </div>
                             <div class="configurator__additional">
+                                {% for subcategory in category.subcategories.all %}
                                 <div class="configurator__item additional__item">
                                     <div class="configurator__item-title">
-                                        <span>Системы управления для токарных станков</span>
+                                        <a href="{% url 'products:subcategory' subcategory.id %}">{{ subcategory.title }}</a>
                                         <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
                                     </div>
                                 </div>
-                                <div class="configurator__item additional__item">
-                                    <div class="configurator__item-title">
-                                        <span>Системы управления для токарных станков</span>
-                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
-                                    </div>
-                                </div>
+                                {% endfor %}
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
-
-                    <div class="catalog__manufacturer" data-config-id="2">
-                        <img src="{% static 'img/tab1act.png' %}" class="active__img" alt="img">
-                        <img src="{% static 'img/tab1def.png' %}" class="passive__img" alt="img">
-                    </div>
-                    <!-- Configurator -->
-                    <div class="configurator" data-id="2">
-                        <div class="additional">
-                            <div class="additional__title">
-                                <span>Сервоприводы для систем ЧПУ</span>
-                                <svg class="configurator__arrow additional__arrow" width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6 15.5L12 9.5L18 15.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <div class="configurator__additional">
-                                <div class="configurator__item additional__item">
-                                    <div class="configurator__item-title">
-                                        <span>Системы управления для токарных станков</span>
-                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
-                                    </div>
-                                </div>
-                                <div class="configurator__item additional__item">
-                                    <div class="configurator__item-title">
-                                        <span>Системы управления для токарных станков</span>
-                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="catalog__manufacturer" data-config-id="3">
-                        <img src="{% static 'img/tab1act.png' %}" class="active__img" alt="img">
-                        <img src="{% static 'img/tab1def.png' %}" class="passive__img" alt="img">
-                    </div>
-                    <!-- Configurator -->
-                    <div class="configurator" data-id="3">
-                        <div class="additional">
-                            <div class="additional__title">
-                                <span>Сервоприводы для систем ЧПУ</span>
-                                <svg class="configurator__arrow additional__arrow" width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6 15.5L12 9.5L18 15.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <div class="configurator__additional">
-                                <div class="configurator__item additional__item">
-                                    <div class="configurator__item-title">
-                                        <span>Системы управления для токарных станков</span>
-                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
-                                    </div>
-                                </div>
-                                <div class="configurator__item additional__item">
-                                    <div class="configurator__item-title">
-                                        <span>Системы управления для токарных станков</span>
-                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="catalog__manufacturer" data-config-id="4">
-                        <img src="{% static 'img/tab1act.png' %}" class="active__img" alt="img">
-                        <img src="{% static 'img/tab1def.png' %}" class="passive__img" alt="img">
-                    </div>
-                    <!-- Configurator -->
-                    <div class="configurator" data-id="4">
-                        <div class="additional">
-                            <div class="additional__title">
-                                <span>Сервоприводы для систем ЧПУ</span>
-                                <svg class="configurator__arrow additional__arrow" width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6 15.5L12 9.5L18 15.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <div class="configurator__additional">
-                                <div class="configurator__item additional__item">
-                                    <div class="configurator__item-title">
-                                        <span>Системы управления для токарных станков</span>
-                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
-                                    </div>
-                                </div>
-                                <div class="configurator__item additional__item">
-                                    <div class="configurator__item-title">
-                                        <span>Системы управления для токарных станков</span>
-                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
 
                     <button class="menumobile__btn menumobile__btn-more hidden">
                         <span>ПОКАЗАТЬ ЕЩЕ</span>
@@ -270,6 +179,7 @@
                     </button>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 </section>

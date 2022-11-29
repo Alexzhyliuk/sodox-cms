@@ -178,8 +178,10 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.filters'
 )
 
-IMAGE_PATH = f"{BASE_DIR}/media/products/"
-IMAGES_PATH = f"{BASE_DIR}/media/products/images/"
+MANUFACTURER_IMAGE_PATH = f"{BASE_DIR}/media/manufacturers/"
+CATEGORY_IMAGE_PATH = f"{BASE_DIR}/media/categories/"
+SUBCATEGORY_IMAGE_PATH = f"{BASE_DIR}/media/subcategories/"
+DOWNLOADS_FILE_PATH = f"{BASE_DIR}/media/downloads/"
 
 
 

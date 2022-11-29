@@ -26,9 +26,27 @@
 			height: 100vh;
 			width: 100vw;
 		}
+		ul {
+			display: flex;
+			list-style-type: none;
+			gap: 20px;
+		}
+		li a {
+			text-decoration: none;
+			color: black;
+			
+		}
 	</style>
 </head>
 <body>
+	<ul>
+		<li><a href="{% url 'products:add_manufacturers' %}">Производители</a></li>
+		<li><a href="{% url 'products:add_categories' %}">Категории</a></li>
+		<li><a href="{% url 'products:add_subcategories' %}">Подкатегории</a></li>
+		<li><a href="{% url 'products:add_nomenclatures' %}">Номекл.</a></li>
+		<li><a href="{% url 'products:add_nomenclatures_rows' %}">Строки номенкл.</a></li>
+		<li><a href="{% url 'products:add_downloads' %}">Загрузки</a></li>
+	</ul>
 	<h1>{{title}}</h1>
 	<form action="." method="POST" enctype="multipart/form-data" >
 		{% csrf_token %}

@@ -1,0 +1,88 @@
+{% extends "home.html" %}
+{% load cms_tags sekizai_tags %}
+{% load static %}
+
+{% block page_title %}Каталог{% endblock %}
+
+{% block main %}
+{% block catalog_img %}
+{% static_placeholder "Catalog Image" %}
+{% endblock catalog_img %}
+<section class="section__catalog">
+    <div class="container">
+        <div class="catalog">
+            <div class="catalog__item left__item">
+                <div class="catalog__bar">
+                    <h3 class="catalog__title">Категории</h3>
+
+                    {% for manufacturer in manufacturers.keys %}
+                    <div class="catalog__manufacturer {% if forloop.first %}active{% endif %}" data-config-id="{{ forloop.counter }}">
+                        <img src="{{ manufacturer.get_image_url }}" class="active__img" alt="img">
+                        <img src="{{ manufacturer.get_inactive_image_url }}" class="passive__img" alt="img">
+                    </div>
+                    <!-- Configurator -->
+                    <div class="configurator {% if forloop.first %}active{% endif %}" data-id="{{ forloop.counter }}">
+                        {% for category in manufacturer.categories.all %}
+                        <div class="additional">
+                            <div class="additional__title">
+                                <a href="{% url 'products:category' category.id %}">{{ category.title }}</a>
+                                <svg class="configurator__arrow additional__arrow" width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 15.5L12 9.5L18 15.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="configurator__additional">
+                                {% for subcategory in category.subcategories.all %}
+                                <div class="configurator__item additional__item">
+                                    <div class="configurator__item-title">
+                                        <a href="{% url 'products:subcategory' subcategory.id %}">{{ subcategory.title }}</a>
+                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="catalog__item right__item">
+                <div class="catalog__img"></div>
+                <!-- Categories -->
+                {% for categories in manufacturers.values %}
+                {% if categories %}
+                <div class="categories {% if forloop.first %}active{% endif %}" data-id="{{ forloop.counter }}">
+                    {% for category in categories %}
+                    <div class="category">
+                        <div class="category__img">
+                            <img src="{{ category.get_image_url }}" alt="">
+                        </div>
+                        <div class="category__title">{{ category.title }}</div>
+                        <div class="category__hover">
+                            <div class="category__hover-title">{{ category.title }}</div>
+                            <div class="category__hover-text">{{ category.short_description }}</div>
+                            <a href="{% url 'products:category' category.id %}" class="category__hover-btn btn btn-arrow">
+                                Подробнее
+                                <img src="{% static 'img/arrow.svg' %}" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    // Menu
+    $('.menu__item').removeClass('active')
+    $('.menu__item[data-uid=1]').remove()
+    $('.menu__item[data-uid=2]').remove()
+    $('.menu__item[data-uid=3]').addClass('active')
+
+</script>
+{% endblock %}

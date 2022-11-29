@@ -1,0 +1,133 @@
+{% extends "home.html" %}
+{% load cms_tags sekizai_tags %}
+{% load static %}
+
+{% block page_title %}Каталог{% endblock %}
+
+{% block main %}
+{% block catalog_img %}
+{% static_placeholder "Catalog Image" %}
+{% endblock catalog_img %}
+<section class="section__catalog">
+    <div class="container">
+        <div class="catalog">
+            <div class="catalog__item left__item">
+                <div class="catalog__bar">
+                    <h3 class="catalog__title">Категории</h3>
+
+                    {% for manufacturer in manufacturers %}
+                    <div class="catalog__manufacturer {% if forloop.first %}active{% endif %}" data-config-id="{{ forloop.counter }}">
+                        <img src="{{ manufacturer.get_image_url }}" class="active__img" alt="img">
+                        <img src="{{ manufacturer.get_inactive_image_url }}" class="passive__img" alt="img">
+                    </div>
+                    <!-- Configurator -->
+                    <div class="configurator {% if forloop.first %}active{% endif %}" data-id="{{ forloop.counter }}">
+                        {% for category in manufacturer.categories.all %}
+                        <div class="additional" data-category-id="{{ category.id }}">
+                            <div class="additional__title">
+                                <a href="{% url 'products:category' category.id %}">{{ category.title }}</a>
+                                <svg class="configurator__arrow additional__arrow" width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 15.5L12 9.5L18 15.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="configurator__additional">
+                                {% for subcategory in category.subcategories.all %}
+                                <div class="configurator__item additional__item">
+                                    <div class="configurator__item-title">
+                                        <a href="{% url 'products:subcategory' subcategory.id %}">{{ subcategory.title }}</a>
+                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="catalog__item right__item">
+                <div class="catalog__img"></div>
+                <div class="section__category">
+                    <div class="category">
+                        <h3 class="section__title title__left"><span>{% render_model category "title" %}</span></h3>
+                        <div class="category__text">{{ category.description }}</div>
+                        <div class="category__tabs tabs">
+                            <div class="tabs__titles">
+                                <div class="tabs__title active" data-tab-id="1">
+                                    <span>
+                                        Преимущества и характеристики
+                                        <img src="{% static 'img/plus.svg' %}" alt="" class="tab__open">
+                                        <img src="{% static 'img/minus.svg' %}" alt="" class="tab__close">
+                                    </span>
+                                    <div class="tab__inner">
+                                        <div class="tab__text">
+                                            {{ category.advantages }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tabs__title" data-tab-id="2">
+                                    <span>
+                                        Продукт. Рекомендация
+                                        <img src="{% static 'img/plus.svg' %}" alt="" class="tab__open">
+                                        <img src="{% static 'img/minus.svg' %}" alt="" class="tab__close">
+                                    </span>
+                                    <div class="tab__inner">
+                                        <div class="tab__text">
+                                            {{ category.recommendation }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab active" data-tab-id="1">
+                                <div class="tab__text">
+                                    <pre style="white-space: pre-line;">
+                                        {{ category.advantages }}
+                                    </pre>
+                                </div>
+                            </div>
+                            <div class="tab" data-tab-id="2">
+                                <div class="tab__text">
+                                    <pre style="white-space: pre-line;">
+                                        {{ category.recommendation }}
+                                    </pre>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="category__items">
+                            {% for subcategory in category.subcategories.all %}
+                            <a href="{% url 'products:subcategory' subcategory.id %}" class="category__item" data-id="{{ forloop.counter }}">
+                                <div class="category__item-img">
+                                    <img src="{{ subcategory.get_image_url }}" alt="">
+                                </div>
+                                <div class="category__item-title">
+                                    {{ subcategory.title }}
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                        <button class="category__btn category__btn-more hidden">
+                            <span>ПОКАЗАТЬ ЕЩЕ</span>
+                            <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 9.5L12 15.5L6 9.5" stroke="#B50000" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg> 
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    $(".configurator").removeClass("active")
+    $(".catalog__manufacturer").removeClass("active")
+    $(".additional[data-category-id={{category.id}}]").addClass("open").parent(".configurator").addClass("active").prev().addClass("active")
+
+    // Menu
+    $('.menu__item').removeClass('active')
+    $('.menu__item[data-uid=1]').remove()
+    $('.menu__item[data-uid=2]').remove()
+
+</script>
+{% endblock %}

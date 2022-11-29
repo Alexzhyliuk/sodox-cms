@@ -1,0 +1,280 @@
+{% extends "home.html" %}
+{% load cms_tags sekizai_tags %}
+{% load static %}
+
+{% block page_title %}Каталог{% endblock %}
+
+{% block main %}
+{% block catalog_img %}
+{% static_placeholder "Catalog Image" %}
+{% endblock catalog_img %}
+<section class="section__catalog">
+    <div class="container">
+        <div class="catalog">
+            <div class="catalog__item left__item">
+                <div class="catalog__bar">
+                    <h3 class="catalog__title">Категории</h3>
+
+                    {% for manufacturer in manufacturers %}
+                    <div class="catalog__manufacturer {% if forloop.first %}active{% endif %}" data-config-id="{{ forloop.counter }}">
+                        <img src="{{ manufacturer.get_image_url }}" class="active__img" alt="img">
+                        <img src="{{ manufacturer.get_inactive_image_url }}" class="passive__img" alt="img">
+                    </div>
+                    <!-- Configurator -->
+                    <div class="configurator {% if forloop.first %}active{% endif %}" data-id="{{ forloop.counter }}">
+                        {% for category in manufacturer.categories.all %}
+                        <div class="additional">
+                            <div class="additional__title">
+                                <a href="{% url 'products:category' category.id %}">{{ category.title }}</a>
+                                <svg class="configurator__arrow additional__arrow" width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 15.5L12 9.5L18 15.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="configurator__additional">
+                                {% for subcategory in category.subcategories.all %}
+                                <div class="configurator__item additional__item" data-subcategory-id="{{ subcategory.id }}">
+                                    <div class="configurator__item-title">
+                                        <a href="{% url 'products:subcategory' subcategory.id %}">{{ subcategory.title }}</a>
+                                        <img src="{% static 'img/config_arrow.svg' %}" alt="img" class="configurator__arrow">
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="catalog__item right__item">
+                <div class="catalog__img"></div>
+                <section class="section__subcategory">
+                    <div class="subcategory__img">
+                        <img src="{{ subcategory.get_image_url }}" alt="">
+                    </div>
+                    <h3 class="section__title title__left subcategory__title"><span>{{ subcategory.title }}</span></h3>
+                    <div class="subcategory__text">
+                        {{ subcategory.description }}
+                    </div>
+                    <div class="subcategory__tabs tabs">
+                        <div class="tabs__titles">
+                            <div class="tabs__title active" data-tab-id="1">
+                                <span>
+                                    Обзор
+                                    <img src="{% static 'img/plus.svg' %}" alt="" class="tab__open">
+                                    <img src="{% static 'img/minus.svg' %}" alt="" class="tab__close">
+                                </span>
+                                <div class="tab__inner">
+                                    <div class="tab__text">
+                                        {{ subcategory.review }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tabs__title" data-tab-id="2">
+                                <span>
+                                    Номенклатура
+                                    <img src="{% static 'img/plus.svg' %}" alt="" class="tab__open">
+                                    <img src="{% static 'img/minus.svg' %}" alt="" class="tab__close">
+                                </span>
+                                <div class="tab__inner">
+                                    {% if nomenclature %}
+                                    <div class="tab__text-title">
+                                        {% render_model nomenclature "title" %}
+                                    </div>
+                                    <div class="tab__table">
+                                        <table class="table-nomenclature" border-collapse="collapse">
+                                            <thead>
+                                                <tr>
+                                                    <th rowspan="2" class="col__model">Модель</th>
+                                                    <th rowspan="2" class="col__code">Код заказа</th>
+                                                    <th rowspan="1" class="col__char" colspan="{{ nomenclature.get_vars_count }}">Характеристики</th>
+                                                </tr>
+                                                <tr>
+                                                    {% for var in nomenclature.get_vars %}
+                                                    <th class="col__var">{{ var }}</th>
+                                                    {% endfor %}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for row in nomenclature.rows.all %}
+                                                <tr>
+                                                    <td>{% render_model row "model" %}</td>
+                                                    <td>{{ row.code }}</td>
+                                                    {% if row.var1 %}
+                                                    <td>{{ row.var1 }}</td>
+                                                    {% endif %}
+                                                    {% if row.var2 %}
+                                                    <td>{{ row.var2 }}</td>
+                                                    {% endif %}
+                                                    {% if row.var3 %}
+                                                    <td>{{ row.var3 }}</td>
+                                                    {% endif %}
+                                                    {% if row.var4 %}
+                                                    <td>{{ row.var4 }}</td>
+                                                    {% endif %}
+                                                    {% if row.var5 %}
+                                                    <td>{{ row.var5 }}</td>
+                                                    {% endif %}
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {% else %}
+                                    <div class="tab_text">
+                                        Еще нет таблицы
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="tabs__title" data-tab-id="3">
+                                <span>
+                                    Загрузки
+                                    <img src="{% static 'img/plus.svg' %}" alt="" class="tab__open">
+                                    <img src="{% static 'img/minus.svg' %}" alt="" class="tab__close">
+                                </span>
+                                <div class="tab__inner">
+                                    <div class="tab__table">
+                                        <table class="table-downloads">
+                                            <thead>
+                                                <tr>
+                                                    <th class="col__series">Серии</th>
+                                                    <th class="col__model">Модель</th>
+                                                    <th class="col__download">Скачать</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for row in subcategory.downloads.all %}
+                                                <tr>
+                                                    <td>{% render_model row "series" %}</td>
+                                                    <td>{{ row.model }}</td>
+                                                    <td>
+                                                        <a href="{{ row.get_file_url }}" download class="table-downloads-icon">
+                                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M9 7.75C8.0335 7.75 7.25 6.9665 7.25 6V1.25H6C3.37665 1.25 1.25 3.37665 1.25 6V18C1.25 20.3682 2.98301 22.3315 5.25 22.6911V15C5.25 13.4812 6.48122 12.25 8 12.25H16C17.5188 12.25 18.75 13.4812 18.75 15V22.6911C21.017 22.3315 22.75 20.3682 22.75 18V9.24264C22.75 8.24808 22.3549 7.29425 21.6516 6.59099L17.409 2.34835C17.2081 2.14749 16.9869 1.97177 16.75 1.82321V6C16.75 6.9665 15.9665 7.75 15 7.75H9ZM15.25 1.28249C15.0876 1.26096 14.923 1.25 14.7574 1.25H8.75V6C8.75 6.13807 8.86193 6.25 9 6.25H15C15.1381 6.25 15.25 6.13807 15.25 6V1.28249ZM6.75 22.75H17.25V15C17.25 14.3096 16.6904 13.75 16 13.75H8C7.30964 13.75 6.75 14.3096 6.75 15V22.75Z" fill="#B50000"/>
+                                                            </svg>
+                                                        </a>                                    
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab active" data-tab-id="1">
+                            <div class="tab__text">
+                                {{ subcategory.review }}
+                            </div>
+                        </div>
+                        <div class="tab" data-tab-id="2">
+                            {% if nomenclature %}
+                            <div class="tab__text-title">
+                                {% render_model nomenclature "title" %}
+                            </div>
+                            <div class="tab__table">
+                                <table class="table-nomenclature" border-collapse="collapse">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2" class="col__model">Модель</th>
+                                            <th rowspan="2" class="col__code">Код заказа</th>
+                                            <th rowspan="1" class="col__char" colspan="{{ nomenclature.get_vars_count }}">Характеристики</th>
+                                        </tr>
+                                        <tr>
+                                            {% for var in nomenclature.get_vars %}
+                                            <th class="col__var">{{ var }}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in nomenclature.rows.all %}
+                                        <tr>
+                                            <td>{% render_model row "model" %}</td>
+                                            <td>{{ row.code }}</td>
+                                            {% if row.var1 %}
+                                            <td>{{ row.var1 }}</td>
+                                            {% endif %}
+                                            {% if row.var2 %}
+                                            <td>{{ row.var2 }}</td>
+                                            {% endif %}
+                                            {% if row.var3 %}
+                                            <td>{{ row.var3 }}</td>
+                                            {% endif %}
+                                            {% if row.var4 %}
+                                            <td>{{ row.var4 }}</td>
+                                            {% endif %}
+                                            {% if row.var5 %}
+                                            <td>{{ row.var5 }}</td>
+                                            {% endif %}
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="tab_text">
+                                Еще нет таблицы
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="tab" data-tab-id="3">
+                            <div class="tab__table">
+                                <table class="table-downloads">
+                                    <thead>
+                                        <tr>
+                                            <th class="col__series">Серии</th>
+                                            <th class="col__model">Модель</th>
+                                            <th class="col__download">Скачать</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in subcategory.downloads.all %}
+                                        <tr>
+                                            <td>{% render_model row "series" %}</td>
+                                            <td>{{ row.model }}</td>
+                                            <td>
+                                                <a href="{{ row.get_file_url }}" download class="table-downloads-icon">
+                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M9 7.75C8.0335 7.75 7.25 6.9665 7.25 6V1.25H6C3.37665 1.25 1.25 3.37665 1.25 6V18C1.25 20.3682 2.98301 22.3315 5.25 22.6911V15C5.25 13.4812 6.48122 12.25 8 12.25H16C17.5188 12.25 18.75 13.4812 18.75 15V22.6911C21.017 22.3315 22.75 20.3682 22.75 18V9.24264C22.75 8.24808 22.3549 7.29425 21.6516 6.59099L17.409 2.34835C17.2081 2.14749 16.9869 1.97177 16.75 1.82321V6C16.75 6.9665 15.9665 7.75 15 7.75H9ZM15.25 1.28249C15.0876 1.26096 14.923 1.25 14.7574 1.25H8.75V6C8.75 6.13807 8.86193 6.25 9 6.25H15C15.1381 6.25 15.25 6.13807 15.25 6V1.28249ZM6.75 22.75H17.25V15C17.25 14.3096 16.6904 13.75 16 13.75H8C7.30964 13.75 6.75 14.3096 6.75 15V22.75Z" fill="#B50000"/>
+                                                    </svg>
+                                                </a>                                    
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-arrow subcategory__btn">
+                        заказать консультацию
+                        <img src="{% static 'img/arrow.svg' %}" alt="img">
+                    </a>
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    $(".configurator").removeClass("active")
+    $(".catalog__manufacturer").removeClass("active")
+    $(".additional__item[data-subcategory-id={{subcategory.id}}]").parent(".configurator__additional").parent(".additional").addClass("open").parent(".configurator").addClass("active").prev().addClass("active")
+
+    $(".table-downloads-icon").each(function(i) {
+        let href = $(this).attr("href")
+
+        if (!href) {
+            $(this).removeAttr("download").removeAttr("href")
+        }
+
+    })
+
+    // Menu
+    $('.menu__item').removeClass('active')
+    $('.menu__item[data-uid=1]').remove()
+    $('.menu__item[data-uid=2]').remove()
+
+</script>
+{% endblock %}

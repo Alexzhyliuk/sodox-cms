@@ -1,4 +1,3 @@
-
 new Swiper('.product__swiper', {
     slidesPerView: 3,
     // spaceBetween: 20,
@@ -37,10 +36,6 @@ $('.burger span').on('click', function() {
     } else {
         $('main').attr('style', '')
     }
-
-    // $('.menu').toggleClass('burger-active')
-    // $('.navbar__btns').toggleClass('burger-active')
-    // $('body').toggleClass('lock')
 })
 
 let width = $(window).width()
@@ -52,6 +47,62 @@ if (width <= 991.98) {
         $('.menumobile').removeClass('active')
     })
 }
+
+// Catalog
+$('.categories .category').on('click', function() {
+    if ($(window).width() >= 991.98) {
+        let link = $(this).children('.category__hover').children('.category__hover-btn').attr('href')
+        console.log(link)
+        location.href = link
+    }
+})
+
+// Configurator
+function getCategoriesInCatalogId() {
+    let categoriesIds = []
+    $('.categories').each((index) => {
+        categoriesIds.push(index+1)
+    })
+
+    return categoriesIds
+}
+
+$('.catalog__manufacturer').on('click', function() {
+    let id = $(this).attr('data-config-id')
+    if ($(this).hasClass('active')) {
+        $('.configurator[data-id='+ id + ']').removeClass('active')
+        $(this).removeClass('active')
+    } else {
+        // Clean configurator
+        $('.catalog__manufacturer').removeClass('active')
+        $('.configurator').removeClass('active')
+        // Open our manufacturer
+        $('.configurator[data-id='+ id + ']').addClass('active')
+        $(this).addClass('active')
+        // Show categories in catalog
+        let categoriesIds = getCategoriesInCatalogId()
+        if (categoriesIds.indexOf(parseInt(id)) != -1) {
+            $(".categories").removeClass('active')
+            $(`.categories[data-id=${id}]`).addClass('active')
+        }
+    }
+})
+
+$(".configurator__item-title").on('click', function() {
+    $(this).parents('.configurator__item').toggleClass('open')
+})
+
+$(".additional__title").on('click', function() {
+    $(this).parents('.additional').toggleClass('open')
+})
+
+$(".configurator__list li").on('click', function() {
+    $(this).toggleClass('checked')
+})
+
+$(".reset").on('click', function() {
+    $(".configurator__list li").removeClass('checked')
+})
 
 // Tabs
 $(".tabs__title").on('click', function() {
@@ -79,17 +130,20 @@ $(".tabs__title").on('click', function() {
     }
 })
 
-
 // Header
 let headerHeight = $('header').height()
 $('.backing').css("height", headerHeight + "px")
+$(document).on('scroll', function() {
+    let headerHeight = $('header').height()
+    $('.backing').css("height", headerHeight + "px")
+})
 
 
 $(".menu__item-droplist").on('click', function(){
     $(this).toggleClass("active")
 })
 
-$(".header__info-btn").on('click', function() {
+$(".header__info-btn, .subcategory__btn").on('click', function() {
     $(".section__form-contact").addClass('active')
     $("body").addClass('lock')
 })
@@ -124,31 +178,6 @@ $(".products__bar-item").on('click', function() {
         $(".products__tab[data-id=" + currentId + "]").addClass('active')
     }
 
-})
-
-// Configurator
-
-$('.catalog__manufacturer').on('click', function() {
-    let id = $(this).attr('data-config-id')
-    $('.configurator[data-id='+ id + ']').toggleClass('active')
-
-    $(this).toggleClass('active')
-})
-
-$(".configurator__item-title").on('click', function() {
-    $(this).parents('.configurator__item').toggleClass('open')
-})
-
-$(".additional__title").on('click', function() {
-    $(this).parents('.additional').toggleClass('open')
-})
-
-$(".configurator__list li").on('click', function() {
-    $(this).toggleClass('checked')
-})
-
-$(".reset").on('click', function() {
-    $(".configurator__list li").removeClass('checked')
 })
 
 // Pagination
@@ -234,9 +263,10 @@ $(".product__swiper .swiper-slide").on('click', function() {
 // Mobile menu
 function hideManufacturers(manufacturers) {
     manufacturers.each(function(index) {
-        console.log(index)
         if (index + 1 > 3) {
             $(`.menumobile .catalog__manufacturer[data-config-id=${index+1}]`).addClass('hidden')
+            $(`.menumobile .catalog__manufacturer[data-config-id=${index+1}]`).removeClass('active')
+            $(`.menumobile .configurator[data-id=${index+1}]`).removeClass('active')
         }
     })
 }
@@ -262,5 +292,37 @@ $('.menumobile__btn').on('click', function() {
         $(this).addClass("menumobile__btn-more")
         $(this).children('span').text("ПОКАЗАТЬ ЕЩЕ")
         hideManufacturers(manufacturers)
+    }
+})
+
+// Category
+function hideSubcategories(subcategories) {
+    subcategories.each(function(index) {
+        if (index + 1 > 3) {
+            $(`.section__category .category__item[data-id=${index+1}]`).addClass('hidden')
+        }
+    })
+}
+
+let subcategories = $(".section__category .category__item")
+let subcategoriesCount = subcategories.length
+if (subcategoriesCount > 3) {
+    $(".category__btn").removeClass('hidden')
+    hideSubcategories(subcategories)
+}
+
+$('.category__btn').on('click', function() {
+    // Open subcategories
+    if ($(this).hasClass("category__btn-more")) {
+        $(this).removeClass("category__btn-more")
+        $(this).addClass("category__btn-hide")
+        $(this).children('span').text("СКРЫТЬ")
+        subcategories.removeClass('hidden')
+    } else if ($(this).hasClass("category__btn-hide")) {
+        // Hide subcategories
+        $(this).removeClass("category__btn-hide")
+        $(this).addClass("category__btn-more")
+        $(this).children('span').text("ПОКАЗАТЬ ЕЩЕ")
+        hideSubcategories(subcategories)
     }
 })

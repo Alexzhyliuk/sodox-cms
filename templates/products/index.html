@@ -40,7 +40,7 @@
                         {% endblock hero_item3 %}</span>
                 </li>
             </ul>
-            <a href="{% url 'products:products' %}" class="btn btn-arrow hero__btn">
+            <a href="{% url 'products:categories' %}" class="btn btn-arrow hero__btn">
                   {% block hero_btn %}
                     {% static_placeholder "Hero Button" %}
                     {% endblock hero_btn %}
@@ -85,7 +85,7 @@
                 </div>
             </div>
         </div>
-        <a href="{% url 'products:products' %}" class="btn btn-arrow about__btn">
+        <a href="{% url 'products:categories' %}" class="btn btn-arrow about__btn">
             {% block about_btn %}
               {% static_placeholder "About Button" %}
               {% endblock about_btn %}
@@ -142,57 +142,6 @@
                     {% static_placeholder "Tasks" %}
                     {% endblock tasks %}
                 </ul>
-            </div>
-        </div>
-    </div>
-</section>
-
-            <!-- Products -->
-            <section class="section__products" id="products-section">
-    <div class="container">
-        <div class="products">
-            <h3 class="section__title">
-                {% block products_title %}
-               {% static_placeholder "Products Title" %}
-               {% endblock products_title %}
-            </h3>
-            <div class="products__tabs">
-                <div class="products__bar">
-                            {% for manufacturer in manufacturers %}
-                            {% if forloop.first %}
-                            <div class="products__bar-item active" data-id="{{manufacturer.id}}">
-                            {% else %}
-                            <div class="products__bar-item" data-id="{{manufacturer.id}}">
-                            {% endif %}
-                               <img src="{{manufacturer.inactive_image.url}}" alt="img" class="default">
-                               <img src="{{manufacturer.image.url}}" alt="img" class="active">
-                            </div>
-                            {% endfor %}
-                </div>
-                {% for manufacturer, products in tabs.items %}
-                <div class="products__tab {% if forloop.first %}active{% endif %}" data-id="{{manufacturer.id}}">
-                    {% for product in products %}
-                    <div class="products__tab-item">
-                        <div class="products__tab-img">
-                            {% if product.image %}
-                            <img src="{{product.image.url}}" alt="">
-                            {% else %}
-                            <img src="/{{product.image_choice}}" alt="">
-                            {% endif %}
-                        </div>
-                        <div class="products__tab-title">{{product.title}}</div>
-                        <div class="products__tab-hover products__hover">
-                            <div class="products__hover-title">{{product.title}}</div>
-                            <div class="products__hover-text">{{product.short_descrition}} </div>
-                            <a href="{% url 'products:product' product.id %}" class="products__hover-btn btn btn-arrow">
-                                Подробнее
-                                <img src="{% static 'img/arrow.svg' %}" alt="">
-                            </a>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endfor %}
             </div>
         </div>
     </div>
