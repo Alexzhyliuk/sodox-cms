@@ -7,9 +7,8 @@ from django.http import HttpResponse, JsonResponse
 from django.db.models import QuerySet
 import math
 import csv
-import pandas as pd
 from django.conf import settings
-
+from products.csv_upload import upload_csv
 
 def categories(request):
     manufacturers = { manufacturer: manufacturer.categories.all()[:6] if i < 4 else [] for i, manufacturer in enumerate(Manufacturer.objects.all().order_by("id"), 1) }
@@ -86,452 +85,79 @@ def contacts(request):
         )
 
 
-# def upload_csv(funct):
-#     def wrapper(request):
-#         if not(request.user.is_superuser):
-#             return redirect(reverse("products:index"))
+@upload_csv(custom={"success": "Производители", "title": "производителей"})
+def add_manufacturers(request, row=[]):
 
-#         if request.POST:
-
-#             try:
-
-#                 data = request.FILES.get("csv_file")
-
-#                 if data:
-
-#                     csv_file = request.FILES['csv_file']
-#                     if not csv_file.name.endswith('.csv'):
-#                         return render(request, 'products/csv_upload.html', {"message": "Загружен не csv файл!"})
-
-#                     try:
-#                         if request.POST.get('sep'):
-#                             file = pd.read_csv(csv_file, sep=';')
-#                         else:
-#                             file = pd.read_csv(csv_file)
-
-#                     except Exception as e:
-#                         print(e)
-#                         return render(request, 'products/csv_upload.html', {"message": "Неверный разделитель"})
-
-#                     error_rows = []
-#                     for index, row in enumerate(file.iterrows()):
-
-#                         try:
-#                             funct(request, row)
-
-#                         except Exception as e:
-#                             print(e)
-#                             error_rows.append(index+1)
-
-#                     if error_rows:
-#                         return render(request, 'products/csv_upload.html', {"message": f"Ошибки в строках {error_rows}"})
-
-#                     return render(request, 'products/csv_upload.html', {"message": "Производители успешно добавлены!"})
-
-#                 return render(request, 'products/csv_upload.html', {"message": "Проблема с файлом!"})
-
-
-#             except Exception as e:
-#                 return render(request, 'products/csv_upload.html', {"message": "Что-то пошло не так:("})
-
-#         return render(
-#             request,
-#             'products/csv_upload.html',
-#             {"message": '', "title": "Добавить производителей через CSV"}
-#             )
-
-#     return wrapper
-
-# @upload_csv
-# def add_manufacturers(request, row=[]):
-
-#     Manufacturer.objects.get_or_create(
-#             title=row[1]['title'],
-#             image=settings.MANUFACTURER_IMAGE_PATH + str(row[1]['image']),
-#             inactive_image=settings.MANUFACTURER_IMAGE_PATH + str(row[1]['inactive_image']),
-#         )
-
-
-
-
-def add_manufacturers(request):
-
-    if not(request.user.is_superuser):
-        return redirect(reverse("products:index"))
-
-    if request.POST:
-
-        try:
-
-            data = request.FILES.get("csv_file")
-
-            if data:
-
-                csv_file = request.FILES['csv_file']
-                if not csv_file.name.endswith('.csv'):
-                    return render(request, 'products/csv_upload.html', {"message": "Загружен не csv файл!"})
-
-                try:
-                    if request.POST.get('sep'):
-                        file = pd.read_csv(csv_file, sep=';')
-                    else:
-                        file = pd.read_csv(csv_file)
-
-                except Exception as e:
-                    print(e)
-                    return render(request, 'products/csv_upload.html', {"message": "Неверный разделитель"})
-
-
-                error_rows = []
-                for index, row in enumerate(file.iterrows()):
-
-                    try:
-                        Manufacturer.objects.get_or_create(
-                                title=row[1]['title'],
-                                image=settings.MANUFACTURER_IMAGE_PATH + str(row[1]['image']),
-                                inactive_image=settings.MANUFACTURER_IMAGE_PATH + str(row[1]['inactive_image']),
-                            )
-
-                    except Exception as e:
-                        print(e)
-                        error_rows.append(index+1)
-
-                if error_rows:
-                    return render(request, 'products/csv_upload.html', {"message": f"Ошибки в строках {error_rows}"})
-
-                return render(request, 'products/csv_upload.html', {"message": "Производители успешно добавлены!"})
-
-            return render(request, 'products/csv_upload.html', {"message": "Проблема с файлом!"})
-
-
-        except Exception as e:
-            return render(request, 'products/csv_upload.html', {"message": "Что-то пошло не так:("})
-
-    return render(
-        request,
-        'products/csv_upload.html',
-        {"message": '', "title": "Добавить производителей через CSV"}
+    Manufacturer.objects.get_or_create(
+            title=row[1]['title'],
+            image=settings.MANUFACTURER_IMAGE_PATH + str(row[1]['image']),
+            inactive_image=settings.MANUFACTURER_IMAGE_PATH + str(row[1]['inactive_image']),
         )
 
 
-def add_categories(request):
-
-    if not(request.user.is_superuser):
-        return redirect(reverse("products:index"))
-
-    if request.POST:
-
-        try:
-
-            data = request.FILES.get("csv_file")
-
-            if data:
-
-                csv_file = request.FILES['csv_file']
-                if not csv_file.name.endswith('.csv'):
-                    return render(request, 'products/csv_upload.html', {"message": "Загружен не csv файл!"})
-
-                try:
-                    if request.POST.get('sep'):
-                        file = pd.read_csv(csv_file, sep=';')
-                    else:
-                        file = pd.read_csv(csv_file)
-
-                except Exception as e:
-                    print(e)
-                    return render(request, 'products/csv_upload.html', {"message": "Неверный разделитель"})
-
-
-                error_rows = []
-                for index, row in enumerate(file.iterrows()):
-
-                    try:
-                        Category.objects.get_or_create(
-                                manufacturer = Manufacturer.objects.filter(title=str(row[1]['manufacturer'])).first(),
-                                title=row[1]['title'],
-                                image=settings.CATEGORY_IMAGE_PATH + str(row[1]['image']),
-                                short_description=row[1]["short_description"],
-                                description=row[1]["description"],
-                                advantages=row[1]["advantages"],
-                                recommendation=row[1]["recommendation"],
-                            )
-
-                    except Exception as e:
-                        print(e)
-                        error_rows.append(index+1)
-
-                if error_rows:
-                    return render(request, 'products/csv_upload.html', {"message": f"Ошибки в строках {error_rows}"})
-
-                return render(request, 'products/csv_upload.html', {"message": "Категории успешно добавлены!"})
-
-            return render(request, 'products/csv_upload.html', {"message": "Проблема с файлом!"})
-
-
-        except Exception as e:
-            print(e)
-            return render(request, 'products/csv_upload.html', {"message": "Что-то пошло не так:("})
-
-    return render(
-        request,
-        'products/csv_upload.html',
-        {"message": '', "title": "Добавить категории через CSV"}
+@upload_csv(custom={"success": "Категории", "title": "категории"})
+def add_categories(request, row=[]):
+   
+    Category.objects.get_or_create(
+            manufacturer = Manufacturer.objects.filter(title=str(row[1]['manufacturer'])).first(),
+            title=row[1]['title'],
+            image=settings.CATEGORY_IMAGE_PATH + str(row[1]['image']),
+            short_description=row[1]["short_description"],
+            description=row[1]["description"],
+            advantages=row[1]["advantages"],
+            recommendation=row[1]["recommendation"],
         )
 
 
-def add_subcategories(request):
+@upload_csv(custom={"success": "Подкатегории", "title": "подкатегории"})
+def add_subcategories(request, row=[]):
 
-    if not(request.user.is_superuser):
-        return redirect(reverse("products:index"))
-
-    if request.POST:
-
-        try:
-
-            data = request.FILES.get("csv_file")
-
-            if data:
-
-                csv_file = request.FILES['csv_file']
-                if not csv_file.name.endswith('.csv'):
-                    return render(request, 'products/csv_upload.html', {"message": "Загружен не csv файл!"})
-
-                try:
-                    if request.POST.get('sep'):
-                        file = pd.read_csv(csv_file, sep=';')
-                    else:
-                        file = pd.read_csv(csv_file)
-
-                except Exception as e:
-                    print(e)
-                    return render(request, 'products/csv_upload.html', {"message": "Неверный разделитель"})
-
-
-                error_rows = []
-                for index, row in enumerate(file.iterrows()):
-
-                    try:
-                        Subcategory.objects.get_or_create(
-                                category = Category.objects.filter(title=str(row[1]['category']), manufacturer__title=str(row[1]["manufacturer"])).first(),
-                                title=row[1]['title'],
-                                image=settings.SUBCATEGORY_IMAGE_PATH + str(row[1]['image']),
-                                description=row[1]["description"],
-                                review=row[1]["review"],
-                            )
-
-                    except Exception as e:
-                        print(e)
-                        error_rows.append(index+1)
-
-                if error_rows:
-                    return render(request, 'products/csv_upload.html', {"message": f"Ошибки в строках {error_rows}"})
-
-                return render(request, 'products/csv_upload.html', {"message": "Подкатегории успешно добавлены!"})
-
-            return render(request, 'products/csv_upload.html', {"message": "Проблема с файлом!"})
-
-
-        except Exception as e:
-            print(e)
-            return render(request, 'products/csv_upload.html', {"message": "Что-то пошло не так:("})
-
-    return render(
-        request,
-        'products/csv_upload.html',
-        {"message": '', "title": "Добавить подкатегории через CSV"}
+    Subcategory.objects.get_or_create(
+            category = Category.objects.filter(title=str(row[1]['category']), manufacturer__title=str(row[1]["manufacturer"])).first(),
+            title=row[1]['title'],
+            image=settings.SUBCATEGORY_IMAGE_PATH + str(row[1]['image']),
+            description=row[1]["description"],
+            review=row[1]["review"],
         )
 
 
-def add_nomenclatures(request):
+@upload_csv(custom={"success": "Номенклатуры", "title": "номенклатуры"})
+def add_nomenclatures(request, row=[]):
 
-    if not(request.user.is_superuser):
-        return redirect(reverse("products:index"))
-
-    if request.POST:
-
-        try:
-
-            data = request.FILES.get("csv_file")
-
-            if data:
-
-                csv_file = request.FILES['csv_file']
-                if not csv_file.name.endswith('.csv'):
-                    return render(request, 'products/csv_upload.html', {"message": "Загружен не csv файл!"})
-
-                try:
-                    if request.POST.get('sep'):
-                        file = pd.read_csv(csv_file, sep=';')
-                    else:
-                        file = pd.read_csv(csv_file)
-
-                except Exception as e:
-                    print(e)
-                    return render(request, 'products/csv_upload.html', {"message": "Неверный разделитель"})
-
-
-                error_rows = []
-                for index, row in enumerate(file.iterrows()):
-
-                    try:
-                        Nomenclature.objects.get_or_create(
-                                subcategory = Subcategory.objects.filter(title=str(row[1]['subcategory'])).filter(category__title=str(row[1]["category"])).filter(category__manufacturer__title=str(row[1]["manufacturer"])).first(),
-                                title=row[1]['title'],
-                                var1=row[1]['var1'] if str(row[1]['var1']) != 'nan' else '',
-                                var2=row[1]['var2'] if str(row[1]['var2']) != 'nan' else '',
-                                var3=row[1]['var3'] if str(row[1]['var3']) != 'nan' else '',
-                                var4=row[1]['var4'] if str(row[1]['var4']) != 'nan' else '',
-                                var5=row[1]['var5'] if str(row[1]['var5']) != 'nan' else '',
-                            )
-
-                    except Exception as e:
-                        print(e)
-                        error_rows.append(index+1)
-
-                if error_rows:
-                    return render(request, 'products/csv_upload.html', {"message": f"Ошибки в строках {error_rows}"})
-
-                return render(request, 'products/csv_upload.html', {"message": "Номенклатуры успешно добавлены!"})
-
-            return render(request, 'products/csv_upload.html', {"message": "Проблема с файлом!"})
-
-
-        except Exception as e:
-            print(e)
-            return render(request, 'products/csv_upload.html', {"message": "Что-то пошло не так:("})
-
-    return render(
-        request,
-        'products/csv_upload.html',
-        {"message": '', "title": "Добавить номенклатуры через CSV"}
+    Nomenclature.objects.get_or_create(
+            subcategory = Subcategory.objects.filter(title=str(row[1]['subcategory'])).filter(category__title=str(row[1]["category"])).filter(category__manufacturer__title=str(row[1]["manufacturer"])).first(),
+            title=row[1]['title'],
+            var1=row[1]['var1'] if str(row[1]['var1']) != 'nan' else '',
+            var2=row[1]['var2'] if str(row[1]['var2']) != 'nan' else '',
+            var3=row[1]['var3'] if str(row[1]['var3']) != 'nan' else '',
+            var4=row[1]['var4'] if str(row[1]['var4']) != 'nan' else '',
+            var5=row[1]['var5'] if str(row[1]['var5']) != 'nan' else '',
         )
 
 
-def add_nomenclatures_rows(request):
+@upload_csv(custom={"success": "Строки для номенклатур", "title": "строки для номенклатур"})
+def add_nomenclatures_rows(request, row=[]):
 
-    if not(request.user.is_superuser):
-        return redirect(reverse("products:index"))
-
-    if request.POST:
-
-        try:
-
-            data = request.FILES.get("csv_file")
-
-            if data:
-
-                csv_file = request.FILES['csv_file']
-                if not csv_file.name.endswith('.csv'):
-                    return render(request, 'products/csv_upload.html', {"message": "Загружен не csv файл!"})
-
-                try:
-                    if request.POST.get('sep'):
-                        file = pd.read_csv(csv_file, sep=';')
-                    else:
-                        file = pd.read_csv(csv_file)
-
-                except Exception as e:
-                    print(e)
-                    return render(request, 'products/csv_upload.html', {"message": "Неверный разделитель"})
-
-
-                error_rows = []
-                for index, row in enumerate(file.iterrows()):
-
-                    try:
-                        NomenclatureRow.objects.get_or_create(
-                                nomenclature = Nomenclature.objects.get(title=str(row[1]['nomenclature'])) if Nomenclature.objects.filter(title=str(row[1]['nomenclature'])).count() == 1 else -1,
-                                model=row[1]['model'],
-                                code=row[1]['code'],
-                                var1=row[1]['var1'] if str(row[1]['var1']) != 'nan' else '',
-                                var2=row[1]['var2'] if str(row[1]['var2']) != 'nan' else '',
-                                var3=row[1]['var3'] if str(row[1]['var3']) != 'nan' else '',
-                                var4=row[1]['var4'] if str(row[1]['var4']) != 'nan' else '',
-                                var5=row[1]['var5'] if str(row[1]['var5']) != 'nan' else '',
-                            )
-
-                    except Exception as e:
-                        print(e)
-                        error_rows.append(index+1)
-
-                if error_rows:
-                    return render(request, 'products/csv_upload.html', {"message": f"Ошибки в строках {error_rows}"})
-
-                return render(request, 'products/csv_upload.html', {"message": "Строки для номенклатур успешно добавлены!"})
-
-            return render(request, 'products/csv_upload.html', {"message": "Проблема с файлом!"})
-
-
-        except Exception as e:
-            print(e)
-            return render(request, 'products/csv_upload.html', {"message": "Что-то пошло не так:("})
-
-    return render(
-        request,
-        'products/csv_upload.html',
-        {"message": '', "title": "Добавить строки для номенклатур через CSV"}
+    NomenclatureRow.objects.get_or_create(
+            nomenclature = Nomenclature.objects.get(title=str(row[1]['nomenclature'])) if Nomenclature.objects.filter(title=str(row[1]['nomenclature'])).count() == 1 else -1,
+            model=row[1]['model'],
+            code=row[1]['code'],
+            var1=row[1]['var1'] if str(row[1]['var1']) != 'nan' else '',
+            var2=row[1]['var2'] if str(row[1]['var2']) != 'nan' else '',
+            var3=row[1]['var3'] if str(row[1]['var3']) != 'nan' else '',
+            var4=row[1]['var4'] if str(row[1]['var4']) != 'nan' else '',
+            var5=row[1]['var5'] if str(row[1]['var5']) != 'nan' else '',
         )
 
 
-def add_downloads(request):
+@upload_csv(custom={"success": "Загрузки", "title": "загрузки"})
+def add_downloads(request, row=[]):
 
-    if not(request.user.is_superuser):
-        return redirect(reverse("products:index"))
-
-    if request.POST:
-
-        try:
-
-            data = request.FILES.get("csv_file")
-
-            if data:
-
-                csv_file = request.FILES['csv_file']
-                if not csv_file.name.endswith('.csv'):
-                    return render(request, 'products/csv_upload.html', {"message": "Загружен не csv файл!"})
-
-                try:
-                    if request.POST.get('sep'):
-                        file = pd.read_csv(csv_file, sep=';')
-                    else:
-                        file = pd.read_csv(csv_file)
-
-                except Exception as e:
-                    print(e)
-                    return render(request, 'products/csv_upload.html', {"message": "Неверный разделитель"})
-
-
-                error_rows = []
-                for index, row in enumerate(file.iterrows()):
-
-                    try:
-                        Downloads.objects.get_or_create(
-                                subcategory = Subcategory.objects.filter(title=str(row[1]['subcategory'])).filter(category__title=str(row[1]["category"])).filter(category__manufacturer__title=str(row[1]["manufacturer"])).first(),
-                                series=row[1]['series'],
-                                model=row[1]['model'],
-                                file=settings.DOWNLOADS_FILE_PATH + str(row[1]["file"]),
-                            )
-
-                    except Exception as e:
-                        print(e)
-                        error_rows.append(index+1)
-
-                if error_rows:
-                    return render(request, 'products/csv_upload.html', {"message": f"Ошибки в строках {error_rows}"})
-
-                return render(request, 'products/csv_upload.html', {"message": "Файлы для скачивания успешно добавлены!"})
-
-            return render(request, 'products/csv_upload.html', {"message": "Проблема с файлом!"})
-
-
-        except Exception as e:
-            print(e)
-            return render(request, 'products/csv_upload.html', {"message": "Что-то пошло не так:("})
-
-    return render(
-        request,
-        'products/csv_upload.html',
-        {"message": '', "title": "Добавить файлы для скачивания через CSV"}
+    Downloads.objects.get_or_create(
+            subcategory = Subcategory.objects.filter(title=str(row[1]['subcategory'])).filter(category__title=str(row[1]["category"])).filter(category__manufacturer__title=str(row[1]["manufacturer"])).first(),
+            series=row[1]['series'],
+            model=row[1]['model'],
+            file=settings.DOWNLOADS_FILE_PATH + str(row[1]["file"]),
         )
 
 # def add_products_characteristics(request):
