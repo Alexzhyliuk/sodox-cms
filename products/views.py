@@ -116,6 +116,7 @@ def add_subcategories(request, row=[]):
             category = Category.objects.filter(title=str(row[1]['category']), manufacturer__title=str(row[1]["manufacturer"])).first(),
             title=row[1]['title'],
             image=settings.SUBCATEGORY_IMAGE_PATH + str(row[1]['image']),
+            short_description=row[1]["short_description"],
             description=row[1]["description"],
             review=row[1]["review"],
         )
