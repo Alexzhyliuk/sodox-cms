@@ -73,6 +73,7 @@ class Subcategory(models.Model):
     category = models.ForeignKey(Category, related_name='subcategories', on_delete=models.CASCADE)
     title = models.CharField("Название", max_length=128)
     image = models.FilePathField("Изображение", path=settings.SUBCATEGORY_IMAGE_PATH, blank=True, null=True)
+    short_description = models.CharField("Краткое описание", max_length=256)
     description = models.TextField("Описание")
     review = models.TextField("Обзор")
 
