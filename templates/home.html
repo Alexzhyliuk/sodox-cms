@@ -266,11 +266,11 @@
 		              {% endblock footer_menu_title %}
                 </div>
                 <ul class="footer__list">
-                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Главная</a></div>
-                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Наши товары</a></div>
-                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Услуги</a></div>
-                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> О нас</a></div>
-                    <div class="footer__list-item"><a href="#" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Контакты</a></div>
+                    <div class="footer__list-item"><a href="{% url 'products:index' %}" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Главная</a></div>
+                    <div class="footer__list-item"><a href="#service-section" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Услуги</a></div>
+                    <div class="footer__list-item"><a href="#about-section" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> О нас</a></div>
+                    <div class="footer__list-item"><a href="{% url 'products:categories' %}" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Каталог</a></div>
+                    <div class="footer__list-item"><a href="{% url 'products:contacts' %}" class="footer__list-link"> <img src="{% static 'img/footer_arrow.svg' %}" alt="img"> Контакты</a></div>
                 </ul>
             </div>
             <div class="footer__item">
