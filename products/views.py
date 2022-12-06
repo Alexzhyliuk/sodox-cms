@@ -68,9 +68,17 @@ def home(request):
 
 
 def index(request):
-	return render(
+
+    manufacturers = Manufacturer.objects.all()[:3]
+    categories = {manufacturer: manufacturer.categories.all()[:6] for manufacturer in manufacturers}
+
+    return render(
 		request,
 		"products/index.html",
+        {
+            "manufacturers": manufacturers,
+            "tabs": categories,
+        }
 		)
 
 

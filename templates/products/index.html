@@ -147,6 +147,53 @@
     </div>
 </section>
 
+<!-- Products -->
+<section class="section__products" id="products-section">
+    <div class="container">
+        <div class="products">
+            <h3 class="section__title">
+                {% block products_title %}
+               {% static_placeholder "Products Title" %}
+               {% endblock products_title %}
+            </h3>
+            <div class="products__tabs">
+                <div class="products__bar">
+                            {% for manufacturer in manufacturers %}
+                            {% if forloop.first %}
+                            <div class="products__bar-item active" data-id="{{manufacturer.id}}">
+                            {% else %}
+                            <div class="products__bar-item" data-id="{{manufacturer.id}}">
+                            {% endif %}
+                               <img src="{{manufacturer.get_inactive_image_url}}" alt="img" class="default">
+                               <img src="{{manufacturer.get_image_url}}" alt="img" class="active">
+                            </div>
+                            {% endfor %}
+                </div>
+                {% for manufacturer, categories in tabs.items %}
+                <div class="products__tab {% if forloop.first %}active{% endif %}" data-id="{{manufacturer.id}}">
+                    {% for category in categories %}
+                    <div class="products__tab-item">
+                        <div class="products__tab-img">
+                            <img src="{{category.get_image_url}}" alt="">
+                        </div>
+                        <div class="products__tab-title">{{category.title}}</div>
+                        <div class="products__tab-hover products__hover">
+                            <div class="products__hover-title">{{category.title}}</div>
+                            <div class="products__hover-text">{{category.short_descrition}} </div>
+                            <a href="{% url 'products:category' category.id %}" class="products__hover-btn btn btn-arrow">
+                                Подробнее
+                                <img src="{% static 'img/arrow.svg' %}" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
             <!-- Customers -->
             <section class="section__customers">
     <div class="container">
